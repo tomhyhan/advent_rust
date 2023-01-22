@@ -31,6 +31,9 @@ fn parse(line: &str, curcuits: &mut HashMap<char, Operations>) {
             operands: vec![],
             operator: None,
         };
+    } else {
+        
+        let current = Operations
     }
 }
 fn main() {
