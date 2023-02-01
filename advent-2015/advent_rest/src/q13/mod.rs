@@ -1,9 +1,7 @@
-use std::cmp::max;
-use std::collections::{HashMap, HashSet};
+use permutohedron;
+use std::cmp;
+use std::collections::HashMap;
 use std::fs;
-
-// fix using permut library
-// while let Some(permutation) = permutations.next_permutation() {
 
 #[derive(Debug)]
 struct Person<'a> {
@@ -11,12 +9,49 @@ struct Person<'a> {
     happiness: i32,
 }
 
-#[derive(Debug)]
-struct h_info<'a> {
-    node: &'a str,
-    happiness: i32,
-    previous: Option<&'a str>,
-    visitied: HashSet<&'a str>,
+pub fn run_code() {
+    let path = "q13.txt";
+    let context = fs::read_to_string(path).expect("cannot read a file");
+
+    let mut graph: HashMap<&str, Vec<Person>> = HashMap::new();
+    context.lines().for_each(|line| parse(line, &mut graph));
+
+    // println!("{:?}", graph);
+
+    get_distances(&graph);
+}
+
+fn get_distances<'a>(graph: &HashMap<&'a str, Vec<Person<'a>>>) {
+    let mut nodes: Vec<&str> = graph.keys().map(|name| name.to_owned()).collect();
+    nodes.push("me");
+    let mut permuations = permutohedron::Heap::new(&mut nodes);
+    let mut max_distance = i32::MIN;
+    while let Some(permu) = permuations.next_permutation() {
+        let mut current_distance = 0;
+        for idx in 0..permu.len() {
+            let current = permu[idx];
+            let next = permu[(idx + 1) % permu.len()];
+            current_distance += if current == "me" || next == "me" {
+                0
+            } else {
+                get_happiness(&graph, current, next)
+            };
+            current_distance += if current == "me" || next == "me" {
+                0
+            } else {
+                get_happiness(&graph, next, current)
+            };
+        }
+        // println!("{:?}", current_distance);
+        max_distance = cmp::max(max_distance, current_distance);
+    }
+    println!("{max_distance}");
+}
+
+fn get_happiness<'a>(graph: &HashMap<&'a str, Vec<Person<'a>>>, current: &str, next: &str) -> i32 {
+    let happy = graph[current].iter().find(|p| p.name == next).unwrap();
+
+    happy.happiness
 }
 
 fn parse<'a>(line: &'a str, graph: &mut HashMap<&'a str, Vec<Person<'a>>>) {
@@ -30,81 +65,4 @@ fn parse<'a>(line: &'a str, graph: &mut HashMap<&'a str, Vec<Person<'a>>>) {
         name: to,
         happiness: if did_lose == "gain" { amount } else { -amount },
     });
-}
-
-fn find_happiness(graph: &HashMap<&str, Vec<Person>>) {
-    let start = "Alice";
-
-    let mut stack = Vec::from([h_info {
-        node: start,
-        happiness: 0,
-        previous: None,
-        visitied: HashSet::new(),
-    }]);
-
-    let mut max_happiness = i32::MIN;
-    while stack.len() > 0 {
-        let mut current_node = stack.pop().unwrap();
-
-        current_node.visitied.insert(current_node.node);
-
-        if !current_node.previous.is_none() {
-            let person = &graph[current_node.node]
-                .iter()
-                .find(|p| p.name == current_node.previous.unwrap())
-                .unwrap();
-            current_node.happiness += person.happiness;
-        }
-
-        println!("{current_node:?}");
-        if current_node.visitied.len() == graph.keys().len() {
-            // last node
-            let end = &graph[current_node.node]
-                .iter()
-                .find(|p| p.name == start)
-                .unwrap();
-            let start = &graph[start]
-                .iter()
-                .find(|p| p.name == current_node.node)
-                .unwrap();
-            current_node.happiness += end.happiness + start.happiness;
-            max_happiness = max(max_happiness, current_node.happiness);
-            println!("{max_happiness}");
-            continue;
-        }
-
-        for person in &graph[current_node.node] {
-            if current_node.visitied.contains(person.name) {
-                continue;
-            }
-
-            stack.push(h_info {
-                node: person.name,
-                happiness: current_node.happiness + person.happiness,
-                previous: Some(current_node.node),
-                visitied: current_node.visitied.clone(),
-            })
-        }
-    }
-}
-
-pub fn run_code() {
-    let path = "q13.txt";
-    let context = fs::read_to_string(path).expect("expect to read a file");
-
-    let mut graph = HashMap::new();
-
-    context.lines().for_each(|line| parse(line, &mut graph));
-    println!("{:?}", graph);
-
-    find_happiness(&graph);
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }

@@ -1,8 +1,8 @@
 use lazy_static::lazy_static;
 // use math::round;
 use regex::Regex;
+use std::cmp;
 use std::fs;
-
 // fix using formula
 
 #[derive(Default, Debug)]
@@ -17,24 +17,34 @@ struct Reindeer {
 }
 
 impl Reindeer {
-    fn add_sec(&mut self) {
-        match self.is_flying {
-            true => {
-                self.distance_so_far += self.speed;
-                self.count += 1;
-                if self.count == self.fly {
-                    self.is_flying = false;
-                    self.count = 0;
-                }
-            }
-            false => {
-                self.count += 1;
-                if self.count == self.rest {
-                    self.is_flying = true;
-                    self.count = 0;
-                }
-            }
-        }
+    //  15 10 100 ::
+    //  15 * 0 + 1 -> t = 1
+    //  15 (1 * 10) + 1 -> t = 111
+    //
+    //
+    fn add_sec(&mut self, time: i32) {
+        let t = time + 1;
+        self.distance_so_far = self.speed
+            * (((t as f32 / (self.fly + self.rest) as f32).floor()) as i32 * self.fly
+                + cmp::min(t % (self.fly + self.rest), self.fly));
+        // println!("{:?}", self.distance_so_far);
+        // match self.is_flying {
+        //     true => {
+        //         self.distance_so_far += self.speed;
+        //         self.count += 1;
+        //         if self.count == self.fly {
+        //             self.is_flying = false;
+        //             self.count = 0;
+        //         }
+        //     }
+        //     false => {
+        //         self.count += 1;
+        //         if self.count == self.rest {
+        //             self.is_flying = true;
+        //             self.count = 0;
+        //         }
+        //     }
+        // }
     }
 }
 
@@ -94,7 +104,7 @@ pub fn run_code() {
     let time_limit = 2503;
     while time < time_limit {
         for reindeer in &mut reindeers {
-            reindeer.add_sec();
+            reindeer.add_sec(time);
         }
 
         let find_max = reindeers.iter().map(|r| r.distance_so_far).max().unwrap();
