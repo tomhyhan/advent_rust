@@ -1,7 +1,23 @@
-use q12::run_code;
+use std::env;
+
+use q12::run_code as q12_run_code;
+use q13::run_code as q13_run_code;
+use q14::run_code as q14_run_code;
 
 pub mod q12;
+pub mod q13;
+pub mod q14;
 
 fn main() {
-    run_code()
+    let q = env::args().nth(1).and_then(|arg| arg.parse::<u32>().ok());
+    println!("{:?}", q);
+
+    match q {
+        Some(12) => q12_run_code(),
+        Some(13) => q13_run_code(),
+        Some(14) => q14_run_code(),
+        _ => panic!("Error"),
+    }
+    // q12_run_code();
+    // q13_run_code();
 }
