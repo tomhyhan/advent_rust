@@ -7,6 +7,7 @@ use q15::run_code as q15_run_code;
 use q16::run_code as q16_run_code;
 use q17::run_code as q17_run_code;
 use q18::run as q18_run_code;
+use q19::run as q19_run_code;
 
 pub mod common;
 pub mod q12;
@@ -16,6 +17,7 @@ pub mod q15;
 pub mod q16;
 pub mod q17;
 pub mod q18;
+pub mod q19;
 
 fn main() {
     let q = env::args().nth(1).and_then(|arg| arg.parse::<u32>().ok());
@@ -29,6 +31,7 @@ fn main() {
         Some(16) => q16_run_code(),
         Some(17) => q17_run_code(),
         Some(18) => q18_run_code(),
+        Some(19) => q19_run_code(),
         _ => panic!("Error"),
     }
     // q12_run_code();
