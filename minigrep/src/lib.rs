@@ -5,12 +5,11 @@ pub struct Config {
     pub query: String,
     pub path: String,
     pub ignore_case: bool,
-    pub ignore_case_arg: String,
 }
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Self, &str> {
-        if args.len() < 4 {
+        if args.len() < 3 {
             return Err("not enough arguments");
         }
 
@@ -19,7 +18,6 @@ impl Config {
             query: args[1].clone(),
             path: args[2].clone(),
             ignore_case,
-            ignore_case_arg: args[3].clone(),
         })
     }
 }
