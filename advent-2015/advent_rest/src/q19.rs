@@ -1,7 +1,7 @@
 use crate::common::read_file;
+use std::cmp;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::str::FromStr;
-use std::thread;
 
 #[derive(Debug, PartialEq, Eq)]
 struct Rudolph {
@@ -38,7 +38,8 @@ impl FromStr for Rudolph {
     type Err = ParsePointError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let split_content: Vec<_> = s.split("\n\n").collect();
+        let split_content: Vec<_> = s.split("\r\n\r\n").collect();
+        println!("{split_content:?}");
         let molecules = split_content[1].to_string();
 
         let mut replacements = HashMap::new();
@@ -57,28 +58,61 @@ impl FromStr for Rudolph {
     }
 }
 
+struct molecules {
+    name: String,
+    count: usize,
+}
 fn find_molecules(start: &str, rudolph: &Rudolph) {
     // enum or struct
-    // let mut queue = VecDeque::from([start, 0]);
+    let mut queue = VecDeque::from([molecules {
+        name: start.to_string(),
+        count: 0,
+    }]);
+
+    let mut shortest_count = usize::MAX;
+    let mut seen = HashSet::new();
+    while queue.len() > 0 {
+        let molecule = queue.pop_front().unwrap();
+
+        if seen.contains(&molecule.name) {
+            continue;
+        }
+        seen.insert(molecule.name.clone());
+        if molecule.count > shortest_count {
+            continue;
+        }
+        // println!("{:?}", molecule.name);
+        if molecule.name == rudolph.molecules {
+            shortest_count = cmp::min(shortest_count, molecule.count);
+            println!("{shortest_count}");
+        }
+
+        let may_molecules = find_matches(&rudolph.replacements, &molecule.name);
+        // println!("{may_molecules:?}");
+        for m in may_molecules {
+            if seen.contains(&m) {
+                continue;
+            }
+            queue.push_back(molecules {
+                name: m,
+                count: molecule.count + 1,
+            });
+        }
+    }
+    println!("{shortest_count:?}");
 }
 
 pub fn run() {
-    // let content = read_file("q19.txt").unwrap();
-    // let rudolph: Rudolph = content.parse().unwrap();
+    let content = read_file("q19.txt").unwrap();
+    let rudolph: Rudolph = content.parse().unwrap();
 
-    // println!("{:?}", rudolph);
+    println!("{:?}", rudolph);
 
-    // let d = find_matches(&rudolph.replacements, &rudolph.molecules);
-    // println!("{:?}", d);
-    // println!("{:?}", d.len());
+    let d = find_matches(&rudolph.replacements, &rudolph.molecules);
+    println!("{:?}", d);
+    println!("{:?}", d.len());
 
-    // find_molecules("e", &rudolph)
-    let list = vec![1, 2, 3];
-    println!("Before defining closure: {:?}", list);
-
-    thread::spawn(|| println!("From thread: {:?}", list))
-        .join()
-        .unwrap();
+    find_molecules("e", &rudolph)
 }
 
 // fn find_matches(str: &str, match_key: &str) -> Vec<(usize, &str)> {
