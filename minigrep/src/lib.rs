@@ -47,7 +47,7 @@ fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.path)?;
 
-    if config.ignore_case_arg == "True" {
+    if config.ignore_case {
         search_case_insensitive(&config.query, &contents)
             .iter()
             .for_each(|line| println!("{line:?}"));
