@@ -2,7 +2,7 @@ use crate::common::my_modules::get_file;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-use std::str::FromStr;
+use std::{collections::HashSet, str::FromStr};
 
 #[derive(Debug)]
 struct Info {
@@ -45,14 +45,15 @@ impl Ips {
     }
 
     fn is_tls(&self, info: &Info) -> bool {
+        let mut matches = HashSet::new();
         let mut hypers = info.hyper.iter();
         while let Some(hyper) = hypers.next() {
             // println!("{hyper:?}");
             let hyper = hyper.as_bytes();
 
-            for abba in hyper.windows(4) {
-                if abba[0] == abba[3] && abba[1] == abba[2] {
-                    return false;
+            for abba in hyper.windows(3) {
+                if abba[0] != abba[1] && abba[0] == abba[2] {
+                    matches.insert((abba[0], abba[1], abba[0]));
                 }
             }
         }
@@ -61,10 +62,15 @@ impl Ips {
         while let Some(abba) = abbas.next() {
             let abba = abba.as_bytes();
 
-            for ab in abba.windows(4) {
-                if ab[0] != ab[1] && ab[0] == ab[3] && ab[1] == ab[2] {
-                    return true;
+            for ab in abba.windows(3) {
+                if ab[0] != ab[1] && ab[0] == ab[2] {
+                    if matches.contains(&(ab[1], ab[0], ab[1])) {
+                        return true;
+                    }
                 }
+                // if ab[0] != ab[1] && ab[0] == ab[2] {
+                //     return true;
+                // }
             }
         }
 
