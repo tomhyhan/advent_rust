@@ -56,11 +56,13 @@ impl Q8 {
                         }
                         let rest = ins.collect::<String>();
                         println!("{rest:?}");
-                        let nums = RE.captures(&rest).unwrap();
-                        println!("{:?}", nums.get(0).map_or("", |m| m.as_str()));
-                        // for caps in nums.iter() {
-                        //     println!(" a - {caps:?}")
-                        // }
+                        let nums: Vec<_> = RE.find_iter(&rest).collect();
+                        let current_row = nums[0].as_str().parse::<i32>().unwrap();
+                        let right = nums[0].as_str().parse::<i32>().unwrap();
+                        self.screen
+                            .iter()
+                            .filter(|(k, v)| k.0 as i32 == current_row)
+                            .for_each(|sc| println!("{:?}", sc));
                     } else {
                     };
                 }
