@@ -6,6 +6,7 @@ use q5::run as run_q5;
 use q6::run as run_q6;
 use q7::run as run_q7;
 use q8::Q8 as run_q8;
+use q9::Q9;
 
 use std::{env, process};
 
@@ -18,9 +19,10 @@ mod q5;
 mod q6;
 mod q7;
 mod q8;
+mod q9;
 
 pub trait Runner {
-    fn run(&mut self) {}
+    fn run(&mut self) -> ();
 }
 
 fn main() {
@@ -31,6 +33,7 @@ fn main() {
     });
 
     let mut q8 = run_q8::new(3, 7);
+    let mut q9 = Q9::new();
     match config.quiz {
         1 => run_q1(),
         2 => run_q2(),
@@ -40,6 +43,7 @@ fn main() {
         6 => run_q6(),
         7 => run_q7(),
         8 => q8.run(),
+        9 => q9.run(),
         _ => panic!("wrong quiz number"),
     }
 }

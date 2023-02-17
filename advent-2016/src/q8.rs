@@ -1,4 +1,7 @@
-use std::{collections::HashMap, str::FromStr};
+use std::{
+    collections::{HashMap, HashSet},
+    str::FromStr,
+};
 
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -15,6 +18,8 @@ enum State {
 pub struct Q8 {
     screen: HashMap<(usize, usize), State>,
     instructions: Instructions,
+    row: i32,
+    col: i32,
 }
 
 impl Q8 {
@@ -33,6 +38,8 @@ impl Q8 {
         Q8 {
             screen,
             instructions,
+            row: row as i32,
+            col: col as i32,
         }
     }
 
@@ -59,10 +66,20 @@ impl Q8 {
                         let nums: Vec<_> = RE.find_iter(&rest).collect();
                         let current_row = nums[0].as_str().parse::<i32>().unwrap();
                         let right = nums[0].as_str().parse::<i32>().unwrap();
-                        self.screen
-                            .iter()
-                            .filter(|(k, v)| k.0 as i32 == current_row)
-                            .for_each(|sc| println!("{:?}", sc));
+                        // let mut ons = HashSet::new();
+                        // self.screen
+                        //     .iter_mut()
+                        //     .filter(|(k, v)| k.0 as i32 == current_row)
+                        //     .for_each(|(key, value)| {
+                        //         self.screen.insert(*key, State::off);
+                        //         self.screen.insert(
+                        //             (
+                        //                 ((key.0 as i32 + right) % self.row).try_into().unwrap(),
+                        //                 key.1,
+                        //             ),
+                        //             State::on,
+                        //         );
+                        //     });
                     } else {
                     };
                 }
