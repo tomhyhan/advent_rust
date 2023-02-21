@@ -1,5 +1,6 @@
 use q1::run as run_q1;
 use q10::Q10;
+use q11::Q11;
 use q2::run as run_q2;
 use q3::run as run_q3;
 use q4::run as run_q4;
@@ -14,6 +15,7 @@ use std::{env, process};
 pub mod common;
 mod q1;
 mod q10;
+mod q11;
 mod q2;
 mod q3;
 mod q4;
@@ -37,6 +39,7 @@ fn main() {
     let mut q8 = Q8::new(3, 7);
     let mut q9 = Q9::new();
     let mut q10 = Q10::new();
+    let mut q11 = Q11::new();
 
     match config.quiz {
         1 => run_q1(),
@@ -49,6 +52,7 @@ fn main() {
         8 => q8.run(),
         9 => q9.run(),
         10 => q10.run(),
+        11 => q11.run(),
         _ => panic!("wrong quiz number"),
     }
 }
