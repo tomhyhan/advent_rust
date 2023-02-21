@@ -1,99 +1,137 @@
 use crate::{common::my_modules::get_file, Runner};
+use core::panic;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::{any, collections::HashMap, hash::Hash, rc::Rc};
 
-#[derive(Debug)]
-struct Bot {
-    num: i32,
-    vals: Vec<Option<i32>>,
+pub struct Q10 {
+    bots: HashMap<usize, Bot>,
+    bins: HashMap<usize, Vec<i32>>,
 }
 
-// impl Bot {
-//     fn new() {
-//         Bot {
-
-//         }
-//     }
-// }
 #[derive(Debug)]
-pub struct Q10 {
-    instructions: HashMap<i32, Vec<Instruction>>,
-    bots: Vec<Bot>,
+struct Bot {
+    vals: Vec<i32>,
+    actions: (Rec, Rec),
+}
+
+impl Bot {
+    fn new() -> Self {
+        Bot {
+            vals: Vec::new(),
+            actions: (Rec::Empty, Rec::Empty),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
-enum Instruction {
-    output(i32),
-    bot(i32),
+enum Rec {
+    Output(i32),
+    Bot(i32),
+    Empty,
 }
 
-fn parse(line: &str, bots: &mut Vec<Bot>, instructions: &mut HashMap<i32, Vec<Instruction>>) {
-    if line.starts_with("value") {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(r"\d+").unwrap();
-        };
-        let nums: Vec<_> = RE.find_iter(line).collect();
-        let value = nums[0].as_str().parse::<i32>().unwrap();
-        let bot_num = nums[1].as_str().parse::<i32>().unwrap();
-        let bot = bots.iter_mut().find(|p| p.num == bot_num);
-        if bot.is_none() {
-            bots.push(Bot {
-                num: bot_num,
-                vals: vec![Some(value)],
-            })
-        } else {
-            bot.unwrap().vals.push(Some(value));
+impl Rec {
+    fn parse(out: &str, val: &str) -> Self {
+        match out {
+            "bot" => Self::Bot(val.parse().unwrap()),
+            "output" => Self::Output(val.parse().unwrap()),
+            _ => panic!("output is invalid"),
         }
-    } else if line.starts_with("bot") {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(r"output \d+|bot \d+").unwrap();
-        }
-        let data: Vec<_> = RE.find_iter(line).collect();
-        // println!("{data:?}");
-        let (_, bot) = data[0].as_str().split_once(" ").unwrap();
-        let (low, low_val) = data[1].as_str().split_once(" ").unwrap();
-        let (high, high_val) = data[2].as_str().split_once(" ").unwrap();
-        let mut ins = Vec::new();
-        if low.contains("output") {
-            ins.push(Instruction::output(low_val.parse::<i32>().unwrap()));
-        } else {
-            ins.push(Instruction::bot(low_val.parse::<i32>().unwrap()));
-        }
+    }
+}
 
-        if high.contains("output") {
-            ins.push(Instruction::output(high_val.parse::<i32>().unwrap()));
-        } else {
-            ins.push(Instruction::bot(high_val.parse::<i32>().unwrap()));
+fn parse(line: &str, bots: &mut HashMap<usize, Bot>) {
+    let mut line: Vec<_> = line.split(" ").collect();
+
+    match line[0] {
+        "value" => bots
+            .entry(line[5].parse::<usize>().unwrap())
+            .or_insert(Bot::new())
+            .vals
+            .push(line[1].parse::<i32>().unwrap()),
+        "bot" => {
+            bots.entry(line[1].parse::<usize>().unwrap())
+                .or_insert(Bot::new())
+                .actions = (Rec::parse(line[5], line[6]), Rec::parse(line[10], line[11]))
         }
-
-        // if high.contains("output") {}
-
-        instructions.insert(bot.parse::<i32>().unwrap(), ins);
+        _ => panic!("invalid input"),
     }
 }
 
 impl Q10 {
     pub fn new() -> Q10 {
         let content = get_file("q10.txt").unwrap();
-        let mut instructions = HashMap::new();
-        let mut bots = Vec::new();
+        let mut bots = HashMap::new();
+        let bins = HashMap::new();
 
-        content
-            .lines()
-            .for_each(|line| parse(&line, &mut bots, &mut instructions));
+        // println!("asdf");
+        content.lines().for_each(|line| parse(&line, &mut bots));
 
-        println!("{instructions:?}");
-        println!("{bots:?}");
+        // println!("{instructions:?}");
+        // println!("{:?}", bots);
 
-        Q10 { instructions, bots }
+        Q10 { bots, bins }
     }
 
-    fn part1(&mut self) {}
+    fn part1(&mut self) {
+        loop {
+            let (bot_num, bot) = match self.bots.iter_mut().find(|(_, p)| p.vals.len() == 2) {
+                Some(bot) => bot,
+                None => break,
+            };
+
+            let (low_val, high_val) = if bot.vals[0] <= bot.vals[1] {
+                (bot.vals[0], bot.vals[1])
+            } else {
+                (bot.vals[1], bot.vals[0])
+            };
+            bot.vals.clear();
+
+            let (low_action, high_action) = (bot.actions.0, bot.actions.1);
+
+            // if low_val == 17 && high_val == 61 {
+            //     println!("{bot_num:?} {bot:?}");
+            //     return;
+            // }
+
+            match low_action {
+                Rec::Bot(num) => self
+                    .bots
+                    .get_mut(&(num as usize))
+                    .unwrap()
+                    .vals
+                    .push(low_val),
+                Rec::Output(num) => self
+                    .bins
+                    .entry(num as usize)
+                    .or_insert(Vec::new())
+                    .push(low_val),
+                Rec::Empty => panic!("invalid"),
+            };
+
+            match high_action {
+                Rec::Bot(num) => self
+                    .bots
+                    .get_mut(&(num as usize))
+                    .unwrap()
+                    .vals
+                    .push(high_val),
+                Rec::Output(num) => self
+                    .bins
+                    .entry(num as usize)
+                    .or_insert(Vec::new())
+                    .push(high_val),
+                Rec::Empty => panic!("invalid"),
+            };
+        }
+    }
 }
 
 impl Runner for Q10 {
     fn run(&mut self) -> () {
-        self.part1()
+        self.part1();
+        println!("{:?}", self.bins);
+        println!("{:?}", 67 * 11 * 31)
     }
 }
