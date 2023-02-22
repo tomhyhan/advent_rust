@@ -39,34 +39,43 @@ impl Q11 {
         let mut floors = Vec::from([vec![], vec![], vec![], vec![]]);
 
         floors[0].append(&mut vec![
-            Radiation::Chip("H".to_string()),
-            Radiation::Chip("L".to_string()),
+            Radiation::Generator("PO".to_string()),
+            Radiation::Generator("TH".to_string()),
+            Radiation::Chip("TH".to_string()),
+            Radiation::Generator("PR".to_string()),
+            Radiation::Generator("RU".to_string()),
+            Radiation::Chip("RU".to_string()),
+            Radiation::Chip("CO".to_string()),
+            Radiation::Generator("CO".to_string()),
         ]);
-        floors[1].append(&mut vec![Radiation::Generator("H".to_string())]);
-        floors[2].append(&mut vec![Radiation::Generator("L".to_string())]);
+        floors[1].append(&mut vec![
+            Radiation::Chip("PO".to_string()),
+            Radiation::Chip("PR".to_string()),
+        ]);
+        // floors[2].append(&mut vec![]);
 
         Q11 { floors }
     }
 
     fn part1(&mut self) {
         let mut stack = VecDeque::from([(0, 0, self.floors.clone())]);
-        let mut visited = HashSet::new();
+        // let mut visited = HashSet::new();
 
         // println!("{:?}", stack);
         while stack.len() > 0 {
             let (pos, steps, floors) = stack.pop_front().unwrap();
             // println!("{pos:?}");
-            // if pos == 3 {
-            //     println!("steps - {steps:?}, floors - {:?}", floors[3]);
-            //     // break;
-            // }
+            if pos == 3 && floors[3].len() == 4 {
+                println!("steps - {steps:?}, floors - {:?}", floors[3]);
+                break;
+            }
 
             // println!("{pos}");
 
-            if visited.contains(&floors) {
-                continue;
-            }
-            visited.insert(floors.clone());
+            // if visited.contains(&floors) {
+            //     continue;
+            // }
+            // visited.insert(floors.clone());
 
             let c_floor = floors[pos].clone();
 
@@ -82,9 +91,9 @@ impl Q11 {
                 .collect();
             // println!("asdf");
 
-            // if generators.len() > 0 && fried(chips, generators) {
-            //     continue;
-            // }
+            if generators.len() > 0 && fried(chips, generators) {
+                continue;
+            }
 
             // move either gen | chip randomly using combination 1, 2
             //
@@ -107,6 +116,9 @@ impl Q11 {
                     }
                 }
                 1 | 2 => {
+                    // if floors[2].len() == 3 {
+                    //     println!("original {floors:?}");
+                    // }
                     for n in 1..3 {
                         for mut comb in current.clone().into_iter().combinations(n) {
                             let mut floors = floors.clone();
@@ -117,7 +129,7 @@ impl Q11 {
                                 .filter(|p| !comb.contains(&p))
                                 .collect();
                             floors[pos + 1].append(&mut comb);
-                            // println!("{floors:?}");
+                            // println!("plus {floors:?}");
 
                             stack.push_back((pos + 1, steps + 1, floors.clone()))
                         }
@@ -132,15 +144,17 @@ impl Q11 {
                                 .filter(|p| !comb.contains(&p))
                                 .collect();
                             floors[pos - 1].append(&mut comb);
+                            // println!("minus {floors:?}");
                             stack.push_back((pos - 1, steps + 1, floors.clone()))
                         }
                     }
+                    // break;
                 }
                 3 => {
-                    if pos == 3 && floors[3].len() == 4 {
-                        println!("found!!");
-                        println!("{steps} {:?}", floors[2])
-                    }
+                    // if pos == 3 {
+                    //     println!("found!!");
+                    //     println!("{steps} {:?}", floors)
+                    // }
                     for n in 1..3 {
                         for mut comb in current.clone().into_iter().combinations(n) {
                             let mut floors = floors.clone();
@@ -200,31 +214,39 @@ impl Runner for Q11 {
 
 // println!("{:?}", test_floor == self.floors);
 
-// #[cfg(test)]
-// mod test {
-//     use super::*;
+#[cfg(test)]
+mod test {
+    use super::*;
 
-//     #[test]
-//     fn it_should_not_return_fried_chips() {
-//         let a = Radiation::Chip("A".to_string());
-//         let b = Radiation::Chip("B".to_string());
-//         let chips = vec![&a, &b];
-//         let c = Radiation::Generator("B".to_string());
-//         let d = Radiation::Generator("C".to_string());
-//         let gens = vec![&c, &d];
+    #[test]
+    fn it_should_not_return_fried_chips() {
+        let a = Radiation::Chip("A".to_string());
+        let b = Radiation::Chip("B".to_string());
+        let chips = vec![a, b];
+        let c = Radiation::Generator("B".to_string());
+        let d = Radiation::Generator("C".to_string());
+        let gens = vec![c, d];
 
-//         assert_eq!(fried(chips, gens), true)
-//     }
+        assert_eq!(fried(chips, gens), true)
+    }
 
-//     #[test]
-//     fn it_should_return_fried_chips() {
-//         let a = Radiation::Chip("A".to_string());
-//         let b = Radiation::Chip("B".to_string());
-//         let chips = vec![&a, &b];
-//         let c = Radiation::Generator("A".to_string());
-//         let d = Radiation::Generator("B".to_string());
-//         let gens = vec![&c, &d];
+    #[test]
+    fn it_should_return_fried_chips() {
+        let a = Radiation::Chip("A".to_string());
+        let b = Radiation::Chip("B".to_string());
+        let chips = vec![a, b];
+        let c = Radiation::Generator("A".to_string());
+        let d = Radiation::Generator("B".to_string());
+        let gens = vec![c, d];
 
-//         assert_eq!(fried(chips, gens), false)
-//     }
-// }
+        assert_eq!(fried(chips, gens), false)
+    }
+
+    #[test]
+    fn two_vectors_match() {
+        let a = vec![Radiation::Chip("B".to_string())];
+        let b = vec![Radiation::Chip("B".to_string())];
+
+        assert_eq!(a, b)
+    }
+}
