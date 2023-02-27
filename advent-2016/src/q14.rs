@@ -97,6 +97,6 @@ impl Q14 {
 
 impl Runner for Q14 {
     fn run(&mut self) -> () {
-        self.part1()
+        self.part1();
     }
 }
