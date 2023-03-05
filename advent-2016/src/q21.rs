@@ -97,7 +97,7 @@ impl Scrambler {
             rotate += 1
         };
         // println!("{:?}", self.puzzle);
-        // println!("{rotate}");
+        // println!("{rotate}");cd ..
         // println!(" letter pos - {letter_pos}");
         if self.reverse_en {
             let original = if letter_pos == 0 {1} else if letter_pos < 4 {letter_pos - 1}  else {letter_pos}; 
