@@ -12,6 +12,7 @@ use q19::Q19;
 use q2::run as run_q2;
 use q20::Q20;
 use q21::Q21;
+use q22::Q22;
 use q3::run as run_q3;
 use q4::run as run_q4;
 use q5::run as run_q5;
@@ -37,6 +38,7 @@ mod q19;
 mod q2;
 mod q20;
 mod q21;
+mod q22;
 mod q3;
 mod q4;
 mod q5;
@@ -70,6 +72,7 @@ fn main() {
     let mut q19 = Q19::new();
     let mut q20 = Q20::new();
     let mut q21 = Q21::new();
+    let mut q22 = Q22::new();
 
     match config.quiz {
         1 => run_q1(),
@@ -93,6 +96,7 @@ fn main() {
         19 => q19.run(),
         20 => q20.run(),
         21 => q21.run(),
+        22 => q22.run(),
         _ => panic!("wrong quiz number"),
     }
 }
