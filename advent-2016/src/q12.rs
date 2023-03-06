@@ -127,33 +127,33 @@ struct Computer {
 impl Computer {
     fn find_password(&mut self) {
         println!("{}", Sample::A as usize);
-        // while (self.pointer as usize) < self.instructions.len() {
-        //     let space = &self.instructions[self.pointer as usize];
-        //     let (address, instruction) = space.split_once(" ").unwrap();
+        while (self.pointer as usize) < self.instructions.len() {
+            let space = &self.instructions[self.pointer as usize];
+            let (address, instruction) = space.split_once(" ").unwrap();
 
-        //     match address {
-        //         "cpy" => {
-        //             let (value, to) = instruction.split_once(" ").unwrap();
-        //             self.registers.copy(value, to);
-        //         }
-        //         "inc" => self.registers.inc(instruction),
-        //         "dec" => self.registers.dec(instruction),
-        //         "jnz" => {
-        //             let (condition, jump) = instruction.split_once(" ").unwrap();
-        //             let jump = self.registers.jump(condition, jump);
-        //             if jump != 0 {
-        //                 // println!("{:?}", self.pointer);
-        //                 // println!("{:?}", self.registers);
-        //                 self.pointer += jump;
-        //                 continue;
-        //             }
-        //         }
-        //         _ => panic!("unknown command!"),
-        //     }
-        //     // println!("{:?}", self.pointer);
-        //     self.pointer += 1;
-        // }
-        // println!("{:?}", self.registers);
+            match address {
+                "cpy" => {
+                    let (value, to) = instruction.split_once(" ").unwrap();
+                    self.registers.copy(value, to);
+                }
+                "inc" => self.registers.inc(instruction),
+                "dec" => self.registers.dec(instruction),
+                "jnz" => {
+                    let (condition, jump) = instruction.split_once(" ").unwrap();
+                    let jump = self.registers.jump(condition, jump);
+                    if jump != 0 {
+                        // println!("{:?}", self.pointer);
+                        // println!("{:?}", self.registers);
+                        self.pointer += jump;
+                        continue;
+                    }
+                }
+                _ => panic!("unknown command!"),
+            }
+            println!("{:?}", self.registers);
+            self.pointer += 1;
+        }
+        println!("{:?}", self.pointer);
     }
 }
 
