@@ -64,7 +64,7 @@ fn main() {
         process::exit(1);
     });
 
-    let mut q8 = Q8::new(3, 7);
+    let mut q8 = Q8::new();
     let mut q9 = Q9::new();
     let mut q10 = Q10::new();
     let mut q11 = Q11::new();
