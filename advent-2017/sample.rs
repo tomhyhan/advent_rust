@@ -13,7 +13,7 @@ impl Sample {
 }
 
 impl Runner for Sample {
-    fn run(&self) {
-
+    fn run(&mut self) {
+        println!("Sample");
     }
 }
