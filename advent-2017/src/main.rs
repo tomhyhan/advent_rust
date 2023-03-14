@@ -5,11 +5,13 @@ use q1::Q1;
 use q2::Q2;
 use q3::Q3;
 use q4::Q4;
+use q5::Q5;
 
 mod q1;
 mod q2;
 mod q3;
 mod q4;
+mod q5;
 
 
 fn copy_file(file_name: &str) {
@@ -24,6 +26,7 @@ fn main() {
     let mut q2 = Q2::new();
     let mut q3 = Q3::new();
     let mut q4 = Q4::new();
+    let mut q5 = Q5::new();
 
     match args[1].as_str() {
         "cp" => {copy_file(&args[2])},
@@ -31,6 +34,7 @@ fn main() {
         "2" => q2.run(),
         "3" => q3.run(),
         "4" => q4.run(),
+        "5" => q5.run(),
         _ => panic!("invalid command")
     };
 }
