@@ -17,6 +17,7 @@ impl Q11 {
         Q11 { process }
     }
 
+    // method 1
     fn part1(&mut self) {
         let mut hex_grid = vec![0,0,0];
 
