@@ -13,6 +13,7 @@ use q9::Q9;
 use q10::Q10;
 use q11::Q11;
 use q12::Q12;
+use q13::Q13;
 
 mod q1;
 mod q2;
@@ -26,6 +27,7 @@ mod q9;
 mod q10;
 mod q11;
 mod q12;
+mod q13;
 
 fn copy_file(file_name: &str) {
     fs::copy("sample.rs", format!("./src/{file_name}.rs")).unwrap();
@@ -46,6 +48,7 @@ fn main() {
     let mut q10 = Q10::new();
     let mut q11 = Q11::new();
     let mut q12 = Q12::new();
+    let mut q13 = Q13::new();
 
     match args[1].as_str() {
         "cp" => {copy_file(&args[2])},
@@ -61,6 +64,7 @@ fn main() {
         "10" => q10.run(),
         "11" => q11.run(),
         "12" => q12.run(),
+        "13" => q13.run(),
         _ => panic!("invalid command")
     };
 }

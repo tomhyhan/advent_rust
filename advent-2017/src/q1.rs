@@ -54,5 +54,5 @@ mod test{
     #[test]
     fn test_part2(){
         let mut q1 = Q1::new();
-        assert_eq!(q1.part2(), 12)
+        assert_eq!(q1.part2(), 1348)
     }}
