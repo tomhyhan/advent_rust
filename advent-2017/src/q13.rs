@@ -1,3 +1,4 @@
+//  do this
 use std::collections::HashMap;
 
 use advent_2017::{Runner, get_file};
@@ -91,6 +92,10 @@ impl Q13 {
         }
         println!("{:?}", severity);   
     }
+
+    // method 3
+    // find when camera position is 0 and nothing else ;(
+
 
     // method 2
     // 0 1 2 3 4 5 6   depth: 4 do: 4 + 2
@@ -212,3 +217,9 @@ mod test{
         assert_eq!(firewall.pos, 2);
     }
 }
+
+
+// 0: 3
+// 1: 2
+// 4: 4
+// 6: 4
