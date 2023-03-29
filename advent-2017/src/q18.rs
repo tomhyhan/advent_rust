@@ -210,14 +210,12 @@ impl Q18 {
             if !continue_running {
                 break
             }
-            println!("{:?}", program1.queue);
             let continue_running = memory.run(&mut program1, &mut program0);
             if !continue_running {
                 break
             }
         }
         println!("{:?}", program1.send_value);
-        println!("{:?}", program0.send_value);
     }
 }
 
