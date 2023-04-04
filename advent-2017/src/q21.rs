@@ -1,27 +1,28 @@
-use std::collections::{HashMap, HashSet};
+use advent_2017::{get_file, Runner};
 use itertools::Itertools;
-use advent_2017::{Runner, get_file};
+use std::collections::{HashMap, HashSet};
 
-pub struct Q21 {
-
-}
+pub struct Q21 {}
 
 struct Art {
-    books: HashMap<String, String>,
-    start_pattern : String
+    books: HashMap<Vec<Vec<char>>, Vec<Vec<char>>>,
+    start_pattern: Vec<Vec<char>>,
 }
 
 impl Art {
     fn new() -> Self {
         let mut books = HashMap::new();
         let content = get_file("q21.txt").unwrap();
-        content.lines().for_each(|line|{
-            parse(line, &mut books)
-        });
-        let start_pattern = ".#...####".to_string();
+        content.lines().for_each(|line| parse(line, &mut books));
+        let start_pattern = vec![
+            vec!['.', '#', '.'],
+            vec!['.', '.', '#'],
+            vec!['#', '#', '#'],
+        ];
+
         Self {
             books,
-            start_pattern
+            start_pattern,
         }
     }
 
@@ -35,16 +36,73 @@ impl Art {
                 size = 3;
             }
 
-            
+            let mut sub_grids = self.get_sub_grids(&pattern, size);
+            for grid in 0..sub_grids.len() {
+                let enhancement = self.perform_enhancement(&mut sub_grids[grid]);
+                println!("{:?}", enhancement);
+                sub_grids[grid] = enhancement;
+            }
+            println!("sub_grids - {:?}", sub_grids);
+            let joined_grid = self.join(sub_grids, &pattern, size);
+            println!("{:?}", joined_grid);
+            pattern = joined_grid;
             cnt -= 1;
         }
     }
 
-    fn perform_enhancement(&self, mut grid: Vec<Vec<char>>) {
-
+    fn join(
+        &self,
+        sub_grids: Vec<Vec<Vec<char>>>,
+        pattern: &Vec<Vec<char>>,
+        size: usize,
+    ) -> Vec<Vec<char>> {
+        let num_of_rows = (sub_grids.len() as f32).sqrt() * size as f32;
+        let mut joined_grid = vec![vec![]; num_of_rows as usize];
+        println!("joined_grid - {:?}", joined_grid);
+        for row in 0..sub_grids.len() {
+            for col in 0..sub_grids[0].len() {
+                joined_grid[row].extend(sub_grids[row][col].clone());
+            }
+        }
+        println!("joined_grid - {:?}", joined_grid);
+        joined_grid
     }
 
-    fn transpose(&self, grid: &mut Vec<Vec<char>> ) {
+    // .#.
+    // ..#
+    // ###
+    fn get_sub_grids(&self, pattern: &Vec<Vec<char>>, size: usize) -> Vec<Vec<Vec<char>>> {
+        let len = pattern.len() / size;
+        let mut sub_grids = vec![vec![vec!['@'; size]; size]; len * len];
+        // println!("{:?}", sub_grids);
+        // println!("len - {:?}", len);
+        for row in 0..pattern.len() {
+            for col in 0..pattern.len() {
+                let pos = row / size * len + col / size;
+                // println!("{:?}", pos);
+                sub_grids[pos][row % size][col % size] = pattern[row][col];
+            }
+        }
+
+        // println!("{:?}", sub_grids);
+        sub_grids
+    }
+
+    fn perform_enhancement(&self, grid: &mut Vec<Vec<char>>) -> Vec<Vec<char>> {
+        for _ in 0..2 {
+            for _ in 0..4 {
+                self.transpose(grid);
+                self.reverse(grid);
+                if self.books.contains_key(grid) {
+                    return self.books.get(grid).unwrap().clone();
+                }
+            }
+            self.reverse(grid);
+        }
+        panic!("match pattern not found")
+    }
+
+    fn transpose(&self, grid: &mut Vec<Vec<char>>) {
         let len = grid[0].len();
         for row in 0..grid.len() {
             for col in row..len {
@@ -55,7 +113,7 @@ impl Art {
         }
     }
 
-    fn reverse(&self, grid: &mut Vec<Vec<char>> ) {
+    fn reverse(&self, grid: &mut Vec<Vec<char>>) {
         let len = grid[0].len();
         for row in 0..grid.len() {
             for col in 0..(len / 2) {
@@ -66,12 +124,17 @@ impl Art {
         }
     }
 
-    fn get_grids(&self, new_points: Vec<(usize,usize)>, size:usize, pattern: &Vec<Vec<char>>) -> Vec<Vec<Vec<char>>> {
+    fn get_grids(
+        &self,
+        new_points: Vec<(usize, usize)>,
+        size: usize,
+        pattern: &Vec<Vec<char>>,
+    ) -> Vec<Vec<Vec<char>>> {
         let mut grids = Vec::new();
-        for (x,y) in new_points.into_iter() {
+        for (x, y) in new_points.into_iter() {
             let mut grid = Vec::new();
-            for row in x..x+size {
-                grid.push(pattern[row][y..y+size].to_vec().clone());
+            for row in x..x + size {
+                grid.push(pattern[row][y..y + size].to_vec().clone());
             }
             grids.push(grid);
         }
@@ -88,15 +151,17 @@ impl Art {
     }
 }
 
-fn parse(line: &str, books: &mut HashMap<String,String>) {
+fn parse(line: &str, books: &mut HashMap<Vec<Vec<char>>, Vec<Vec<char>>>) {
     let (left_img, right_img) = line.split_once(" => ").unwrap();
-    books.insert(left_img.to_string(), right_img.to_string());
+    let left_img = left_img.split('/').map(|p| p.chars().collect()).collect();
+    let right_img = right_img.split('/').map(|p| p.chars().collect()).collect();
+
+    books.insert(left_img, right_img);
 }
 
-
-#[derive(Debug,PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 struct Image {
-    pattern : Vec<Vec<char>>,
+    pattern: Vec<Vec<char>>,
 }
 
 impl Q21 {
@@ -105,9 +170,8 @@ impl Q21 {
     }
 
     fn part1(&mut self) {
-        let grid = Grid::new();
-        let s = grid.split();
-        println!("{:?}", s);
+        let mut art = Art::new();
+        art.iteration(2);
     }
 }
 
@@ -117,79 +181,25 @@ impl Runner for Q21 {
     }
 }
 
-
-#[derive(Debug, Clone)]
-struct Grid {
-    size: usize,
-    pixels: HashSet<(usize, usize)>,
-}
-
-
-impl Grid {
-    fn new() -> Self {
-        let starting_pixels = vec![(0, 1), (1, 2), (2, 0), (2, 1), (2, 2)];
-        Self {
-            size: 3,
-            pixels: HashSet::from_iter(starting_pixels),
-        }
-    }
-
-    // 0011
-    // 0011
-    // 2233
-    // 2233
-    // 000111222
-    // 000111222
-    // 000111222
-    // 333444555
-    // 333444555
-    // 333444555
-    // 666777888
-    fn split(&self) -> Vec<Self> {
-        let size = if self.size % 2 == 0 { 2 } else { 3 };
-
-        let width = self.size / size;
-        let mut result = vec![
-            Grid {
-                size,
-                pixels: HashSet::new()
-            };
-            width * width
-        ];
-        for row in 0..self.size {
-            for col in 0..self.size {
-                let which = (row / size) * width + (col / size);
-                println!("which - {:?}", which);
-                if self.pixels.contains(&(row, col)) {
-                    result[which].pixels.insert((row % size, col % size));
-                }
-            }
-        }
-
-        result
-    }
-}
-
 #[cfg(test)]
-mod test{
+mod test {
     use super::*;
 
     #[test]
     fn test_reverse() {
-        let mut grid = vec![vec!['1','2'], vec!['3','4']];
+        let mut grid = vec![vec!['1', '2'], vec!['3', '4']];
         let art = Art::new();
         art.reverse(&mut grid);
         println!("{:?}", grid);
-        assert_eq!(vec![vec!['2','1'], vec!['4','3']], grid);
+        assert_eq!(vec![vec!['2', '1'], vec!['4', '3']], grid);
     }
 
     #[test]
     fn test_transpose() {
-        let mut grid = vec![vec!['1','2'], vec!['3','4']];
+        let mut grid = vec![vec!['1', '2'], vec!['3', '4']];
         let art = Art::new();
         art.transpose(&mut grid);
         println!("{:?}", grid);
-        assert_eq!(1,2)
+        assert_eq!(1, 2)
     }
 }
-
