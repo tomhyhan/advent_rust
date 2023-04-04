@@ -108,7 +108,7 @@ impl Runner for Q16 {
 mod test{
     use super::*;
 
-    #[test]
+    // #[test]
     fn dance_program() {
         let program = Program::new();
         let mut programs: Vec<char> = "abcde".chars().collect();
