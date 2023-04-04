@@ -39,12 +39,11 @@ impl Art {
             let mut sub_grids = self.get_sub_grids(&pattern, size);
             for grid in 0..sub_grids.len() {
                 let enhancement = self.perform_enhancement(&mut sub_grids[grid]);
-                println!("{:?}", enhancement);
                 sub_grids[grid] = enhancement;
             }
-            println!("sub_grids - {:?}", sub_grids);
-            let joined_grid = self.join(sub_grids, &pattern, size);
-            println!("{:?}", joined_grid);
+            let joined_grid = self.join(sub_grids);
+            let sum = joined_grid.iter().map(|line|line.iter().filter(|&&p| p == '#').count()).sum::<usize>();
+            println!("{:?}", sum);
             pattern = joined_grid;
             cnt -= 1;
         }
@@ -53,18 +52,15 @@ impl Art {
     fn join(
         &self,
         sub_grids: Vec<Vec<Vec<char>>>,
-        pattern: &Vec<Vec<char>>,
-        size: usize,
     ) -> Vec<Vec<char>> {
-        let num_of_rows = (sub_grids.len() as f32).sqrt() * size as f32;
+        let num_of_rows = (sub_grids.len() as f32).sqrt() * sub_grids[0].len() as f32;
         let mut joined_grid = vec![vec![]; num_of_rows as usize];
-        println!("joined_grid - {:?}", joined_grid);
         for row in 0..sub_grids.len() {
             for col in 0..sub_grids[0].len() {
-                joined_grid[row].extend(sub_grids[row][col].clone());
+                let pos = row / (sub_grids.len() as f32).sqrt() as usize * sub_grids[0].len() + col; 
+                joined_grid[pos].extend(sub_grids[row][col].clone());
             }
         }
-        println!("joined_grid - {:?}", joined_grid);
         joined_grid
     }
 
@@ -74,17 +70,14 @@ impl Art {
     fn get_sub_grids(&self, pattern: &Vec<Vec<char>>, size: usize) -> Vec<Vec<Vec<char>>> {
         let len = pattern.len() / size;
         let mut sub_grids = vec![vec![vec!['@'; size]; size]; len * len];
-        // println!("{:?}", sub_grids);
-        // println!("len - {:?}", len);
+
         for row in 0..pattern.len() {
             for col in 0..pattern.len() {
                 let pos = row / size * len + col / size;
-                // println!("{:?}", pos);
                 sub_grids[pos][row % size][col % size] = pattern[row][col];
             }
         }
 
-        // println!("{:?}", sub_grids);
         sub_grids
     }
 
@@ -124,31 +117,31 @@ impl Art {
         }
     }
 
-    fn get_grids(
-        &self,
-        new_points: Vec<(usize, usize)>,
-        size: usize,
-        pattern: &Vec<Vec<char>>,
-    ) -> Vec<Vec<Vec<char>>> {
-        let mut grids = Vec::new();
-        for (x, y) in new_points.into_iter() {
-            let mut grid = Vec::new();
-            for row in x..x + size {
-                grid.push(pattern[row][y..y + size].to_vec().clone());
-            }
-            grids.push(grid);
-        }
-        grids
-    }
+    // fn get_grids(
+    //     &self,
+    //     new_points: Vec<(usize, usize)>,
+    //     size: usize,
+    //     pattern: &Vec<Vec<char>>,
+    // ) -> Vec<Vec<Vec<char>>> {
+    //     let mut grids = Vec::new();
+    //     for (x, y) in new_points.into_iter() {
+    //         let mut grid = Vec::new();
+    //         for row in x..x + size {
+    //             grid.push(pattern[row][y..y + size].to_vec().clone());
+    //         }
+    //         grids.push(grid);
+    //     }
+    //     grids
+    // }
 
-    fn get_points(&self, mut length: usize, divisible: usize) -> Vec<usize> {
-        let mut points = vec![];
-        while length > 0 {
-            length -= divisible;
-            points.push(length)
-        }
-        points
-    }
+    // fn get_points(&self, mut length: usize, divisible: usize) -> Vec<usize> {
+    //     let mut points = vec![];
+    //     while length > 0 {
+    //         length -= divisible;
+    //         points.push(length)
+    //     }
+    //     points
+    // }
 }
 
 fn parse(line: &str, books: &mut HashMap<Vec<Vec<char>>, Vec<Vec<char>>>) {
@@ -171,7 +164,7 @@ impl Q21 {
 
     fn part1(&mut self) {
         let mut art = Art::new();
-        art.iteration(2);
+        art.iteration(18);
     }
 }
 
