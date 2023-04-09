@@ -1,15 +1,5 @@
-use std::fs;
-use std::env;
 use advent_2017::Runner;
 use q1::Q1;
-use q2::Q2;
-use q3::Q3;
-use q4::Q4;
-use q5::Q5;
-use q6::Q6;
-use q7::Q7;
-use q8::Q8;
-use q9::Q9;
 use q10::Q10;
 use q11::Q11;
 use q12::Q12;
@@ -20,21 +10,24 @@ use q16::Q16;
 use q17::Q17;
 use q18::Q18;
 use q19::Q19;
+use q2::Q2;
 use q20::Q20;
 use q21::Q21;
 use q22::Q22;
 use q23::Q23;
 use q24::Q24;
+use q25::Q25;
+use q3::Q3;
+use q4::Q4;
+use q5::Q5;
+use q6::Q6;
+use q7::Q7;
+use q8::Q8;
+use q9::Q9;
+use std::env;
+use std::fs;
 
 mod q1;
-mod q2;
-mod q3;
-mod q4;
-mod q5;
-mod q6;
-mod q7;
-mod q8;
-mod q9;
 mod q10;
 mod q11;
 mod q12;
@@ -45,18 +38,27 @@ mod q16;
 mod q17;
 mod q18;
 mod q19;
+mod q2;
 mod q20;
 mod q21;
 mod q22;
 mod q23;
 mod q24;
+mod q25;
+mod q3;
+mod q4;
+mod q5;
+mod q6;
+mod q7;
+mod q8;
+mod q9;
 
 fn copy_file(file_name: &str) {
     fs::copy("sample.rs", format!("./src/{file_name}.rs")).unwrap();
 }
 
 fn main() {
-    let args : Vec<_>= env::args().collect();
+    let args: Vec<_> = env::args().collect();
 
     let mut q1 = Q1::new();
     let mut q2 = Q2::new();
@@ -82,9 +84,10 @@ fn main() {
     let mut q22 = Q22::new();
     let mut q23 = Q23::new();
     let mut q24 = Q24::new();
+    let mut q25 = Q25::new();
 
     match args[1].as_str() {
-        "cp" => {copy_file(&args[2])},
+        "cp" => copy_file(&args[2]),
         "1" => q1.run(),
         "2" => q2.run(),
         "3" => q3.run(),
@@ -109,6 +112,7 @@ fn main() {
         "22" => q22.run(),
         "23" => q23.run(),
         "24" => q24.run(),
-        _ => panic!("invalid command")
+        "25" => q25.run(),
+        _ => panic!("invalid command"),
     };
 }
