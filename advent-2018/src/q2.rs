@@ -102,10 +102,7 @@ impl Q2 {
 impl Runner for Q2 {
     fn run(&mut self) {
         // self.part1()
-        // self.part2()
-        let x = "abcd".to_string();
-        let y = "abcf".to_string();
-        let z = x.chars().zip(y.chars())
+        self.part2()
     }
 }
 
