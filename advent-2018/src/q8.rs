@@ -1,3 +1,4 @@
+// again
 use std::time::Instant;
 
 use advent_2018::{Runner, get_file};
@@ -40,6 +41,49 @@ impl Q8 {
         let r = find_refence_sum(&mut file.data, 0);
         println!("{:?}", r);
     }
+
+    // method2 of part2
+    fn part3(&mut self) {
+        let mut file = File::new();
+
+        let (total ,value, data) = memory_maneuver(&file.data);
+        println!("{total} {value}");
+    }
+}
+
+// 2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2
+fn memory_maneuver(data: &[i32]) -> (i32, i32 ,&[i32]) {
+    let children = data[0];
+    let metadata = data[1];
+    let mut rest = &data[2..]; 
+    let mut total = 0;
+    let mut references = vec![];
+
+    // println!("{:?}", children);
+    // println!("{:?}", metadata);
+    // println!("{:?}", rest);
+    // println!("",);
+    for _ in 0..children {
+        let (sum, val, data) = memory_maneuver(rest);
+        total += sum;
+        rest = data;
+        references.push(val)
+    };
+
+    total += &rest[..metadata as usize].iter().sum();
+
+    if children ==0 {
+        (total, *&rest[..metadata as usize].iter().sum::<i32>(), &rest[metadata as usize..])
+    } else {
+        let values: _ = &rest[..metadata as usize].iter().map(|&meta| {
+            if meta != 0 && meta <= references.len() as i32{
+                return references[meta as usize - 1]
+            };
+            0
+        }).sum::<i32>();
+        (total, *values, &rest[metadata as usize..])
+    }
+
 }
 
 fn get_sum(zero_idx: usize, data: &mut Vec<i32>) -> i32 {
@@ -109,6 +153,12 @@ impl Runner for Q8 {
         self.part2();
         let duration = start.elapsed();
         println!("part2 - {:?}", duration);
+
+        let start = Instant::now();
+        self.part3();
+        let duration = start.elapsed();
+        println!("part3 - {:?}", duration);
+        
     }
 }
 
@@ -120,4 +170,3 @@ mod test{
         assert_eq!(1, 1);
     }
 }
-
