@@ -105,7 +105,7 @@ impl Sleigh {
 
     // method 1
     fn run1 (&mut self) {
-        let mut worker_processes = HashSet::new();;
+        let mut worker_processes = HashSet::new();
         let mut queue = vec![]; 
 
         for part in self.parts.iter() {
