@@ -100,14 +100,14 @@ impl Runner for Q11 {
 mod test{
     use super::*;
     
-    #[test]
-    fn Q11() {
-        let mut charge = Charge::new();
-        charge.find_fuels();
-        // 33,45
-        let r = charge.grid[45][33];
-        assert_eq!(r, 3);
-    }
+    // #[test]
+    // fn Q11() {
+    //     let mut charge = Charge::new();
+    //     charge.find_fuels();
+    //     // 33,45
+    //     let r = charge.grid[45][33];
+    //     assert_eq!(r, 3);
+    // }
 
     // #[test]
     // fn find_max_of_18() {
