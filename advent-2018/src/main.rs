@@ -1,7 +1,14 @@
-use std::env;
 use advent_2018::{copy_file, Runner};
+use std::env;
 
 use q1::Q1;
+use q10::Q10;
+use q11::Q11;
+use q12::Q12;
+use q13::Q13;
+use q14::Q14;
+use q15::Q15;
+use q16::Q16;
 use q2::Q2;
 use q3::Q3;
 use q4::Q4;
@@ -10,14 +17,15 @@ use q6::Q6;
 use q7::Q7;
 use q8::Q8;
 use q9::Q9;
-use q10::Q10;
-use q11::Q11;
-use q12::Q12;
-use q13::Q13;
-use q14::Q14;
-use q15::Q15;
 
 mod q1;
+mod q10;
+mod q11;
+mod q12;
+mod q13;
+mod q14;
+mod q15;
+mod q16;
 mod q2;
 mod q3;
 mod q4;
@@ -26,15 +34,9 @@ mod q6;
 mod q7;
 mod q8;
 mod q9;
-mod q10;
-mod q11;
-mod q12;
-mod q13;
-mod q14;
-mod q15;
 
 fn main() {
-    let args : Vec<_>= env::args().collect();
+    let args: Vec<_> = env::args().collect();
 
     let mut q1 = Q1::new();
     let mut q2 = Q2::new();
@@ -51,6 +53,7 @@ fn main() {
     let mut q13 = Q13::new();
     let mut q14 = Q14::new();
     let mut q15 = Q15::new();
+    let mut q16 = Q16::new();
 
     match args[1].as_str() {
         "cp" => copy_file(args[2].as_str()).unwrap(),
@@ -69,6 +72,7 @@ fn main() {
         "13" => q13.run(),
         "14" => q14.run(),
         "15" => q15.run(),
-        _ => panic!("invalid instruction!")
+        "16" => q16.run(),
+        _ => panic!("invalid instruction!"),
     }
 }
