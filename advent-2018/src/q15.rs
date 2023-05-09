@@ -216,10 +216,7 @@ impl Game {
         seen: &mut HashSet<(i32, i32)>,
     ) -> (i32, i32) {
         let open_spots = self.find_open_spots(row, col, map);
-        // should be ([start pos], [current_location], [])
-        // if row == 17 && col == 23 {
-        //     println!("openspots {:?}", open_spots);
-        // }
+
         let mut queue = VecDeque::from(open_spots);
         let mut min_distance = i32::MAX;
         let end = if is_elf { 'G' } else { 'E' };
@@ -256,26 +253,11 @@ impl Game {
                 .then((p1.0 .0, p1.0 .1).cmp(&(p2.0 .0, p2.0 .1)))
         });
 
-        // if row == 17 && col == 23 {
-        //     println!("result {:?}", result);
-        //     println!("min_distance - {min_distance}");
-        //     for i in 15..20 {
-        //         let mut s = String::new();
-        //         for j in 18..30 {
-        //             let c = map.get(&(i, j)).unwrap();
-        //             s.push(c.clone());
-        //         }
-        //         println!("{:?}", s)
-        //     }
-        // }
-        // println!("{:?}", map);
         if result.is_empty() {
             return (row, col);
         }
 
         let move_to = result[0].0;
-        // println!(" move_to - {:?}", move_to);
-        // println!("");
 
         if is_elf {
             let mut elf = self
@@ -329,7 +311,6 @@ impl Game {
             let new_row = row + dir.0;
             let new_col = col + dir.1;
             let current = map.get(&(new_row, new_col)).unwrap();
-            // println!("{current}");
             if is_elf && *current == 'G' {
                 return false;
             } else if !is_elf && *current == 'E' {
@@ -401,9 +382,6 @@ impl Q15 {
             elf_attack += 1;
             let mut game = Game::new(elf_attack);
             let elfs_alive = game.combat();
-            println!("elf_attack - {:?}", elf_attack);
-            println!("gobs - {:?}", game.goblins);
-            // println!("gobs - {:?}", game.elfs);
             if !elfs_alive {
                 continue;
             }
