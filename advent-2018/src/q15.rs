@@ -1,14 +1,14 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque, HashSet};
 
-use advent_2018::{get_file, Runner};
+use advent_2018::{Runner, get_file};
 use regex::internal::Char;
 
-pub struct Q15 {}
+pub struct Q15 {
+
+}
 
 pub struct Game {
-    map: HashMap<(i32, i32), char>,
-    elfs: Vec<Elf>,
-    goblins: Vec<Goblin>,
+    map: HashMap<(i32, i32), Tile>,
     min_row: i32,
     max_row: i32,
     min_col: i32,
@@ -16,358 +16,158 @@ pub struct Game {
 }
 
 impl Game {
-    fn new(elf_attack: i32) -> Self {
+    fn new() -> Self {
         let contents = get_file("src/input/q15.txt").unwrap();
         let mut map = HashMap::new();
-        let mut elfs = Vec::new();
-        let mut goblins = Vec::new();
         let mut min_row = i32::MAX;
         let mut max_row = i32::MIN;
         let mut min_col = i32::MAX;
         let mut max_col = i32::MIN;
-
-        contents.lines().enumerate().for_each(|(row, line)| {
+        
+        contents.lines().enumerate().for_each(|(row,line)| {
             line.chars().enumerate().for_each(|(col, c)| {
                 let row = row as i32;
                 let col = col as i32;
                 match c {
-                    '#' => {
-                        map.insert((row, col), '#');
-                    }
-                    '.' => {
-                        map.insert((row, col), '.');
-                    }
-                    'G' => {
-                        goblins.push(Goblin::new(row, col));
-                        map.insert((row, col), '.');
-                    }
-                    'E' => {
-                        elfs.push(Elf::new(row, col, elf_attack));
-                        map.insert((row, col), '.');
-                    }
-                    _ => panic!("not a member of a map"),
+                    '#' => map.insert((row,col), Tile::Wall),
+                    '.' => map.insert((row,col), Tile::Open),
+                    'G' => map.insert((row,col), Tile::Goblin(CharInfo::new(row,col))),
+                    'E' => map.insert((row,col), Tile::Elf(CharInfo::new(row,col))),
+                    _ => panic!("not a member of a map")
                 };
-                min_row = min_row.min(row);
-                max_row = max_row.max(row);
-                min_col = min_col.min(col);
-                max_col = max_col.max(col);
+                min_row = min_row.min(row);  
+                max_row = max_row.max(row); 
+                min_col = min_col.min(col); 
+                max_col = max_col.max(col); 
+                
             })
         });
-        Self {
-            map,
-            elfs,
-            goblins,
-            max_col,
-            max_row,
-            min_col,
-            min_row,
-        }
+        Self {map,max_col,max_row,min_col,min_row}
     }
 
-    fn combat(&mut self) -> bool {
+    fn combat(&mut self) {
         let mut rounds = 0;
-        let num_of_elfs = self.elfs.len();
-        loop {
-            rounds += 1;
-            let mut current_map = self.map.clone();
-            self.add_characters(&mut current_map);
-            let mut seen = HashSet::new();
 
+        loop {
             for row in self.min_row..=self.max_row {
                 for col in self.min_col..=self.max_col {
-                    if seen.contains(&(row, col)) {
-                        continue;
-                    }
-                    let current = current_map.get(&(row, col)).unwrap();
-                    match current {
-                        'E' => {
-                            if self.can_move(row, col, true, &current_map) {
-                                let (new_row, new_col) = self.move_character(
-                                    row,
-                                    col,
-                                    true,
-                                    &mut current_map,
-                                    &mut seen,
-                                );
-                                self.try_attack(new_row, new_col, true, &mut current_map);
-                            } else {
-                                self.try_attack(row, col, true, &mut current_map);
+                    let current_tile = self.map.get_mut(&(row,col)).cloned().unwrap();
+                    match current_tile {
+                        Tile::Elf(info) => {
+                            if self.check_enemy(row,col,&info) {
+                                continue
                             }
-                        }
-                        'G' => {
-                            if self.can_move(row, col, false, &current_map) {
-                                let (new_row, new_col) = self.move_character(
-                                    row,
-                                    col,
-                                    false,
-                                    &mut current_map,
-                                    &mut seen,
-                                );
-                                self.try_attack(new_row, new_col, false, &mut current_map);
-                            } else {
-                                self.try_attack(row, col, false, &mut current_map);
-                            }
-                        }
-                        '.' | '#' => continue,
-                        _ => panic!("unknonw characters!"),
+                            let mut reachable = self.find_reachable(row,col,'G');
+                            if reachable.is_empty() {
+                                continue
+                            };
+                            reachable.sort();
+                            let togo = reachable[0].clone(); 
+                            self.find_next_step(row,col, togo);
+                        },
+                        Tile::Goblin(info) => {
+                            self.find_reachable(row,col,'E');
+                        },
+                        _ => {}
                     }
                 }
             }
-
-            if self.elfs.len() != num_of_elfs {
-                return false;
-            }
-            if self.elfs.is_empty() || self.goblins.is_empty() {
-                break;
-            }
+            rounds += 1;   
+            break         
         }
-
-        let gob_hp: i32 = self.goblins.iter().map(|g| g.hp).sum();
-        let elf_hp: i32 = self.elfs.iter().map(|g| g.hp).sum();
-
-        println!("result");
-        println!("{:?}", self.elfs);
-        println!("{:?}", self.goblins);
-        println!("gob {:?}", gob_hp);
-        println!("elf {:?}", elf_hp);
-        println!("{:?}", rounds);
-        println!("{:?}", gob_hp * (rounds - 1));
-        println!("{:?}", gob_hp * (rounds - 2));
-        println!("{:?}", elf_hp * (rounds - 1));
-
-        true
     }
-
-    // 17 23 -> 17 24 || 16 23 14 24 15 24
-    // 17 23 -> 17 22
-    fn try_attack(
-        &mut self,
-        row: i32,
-        col: i32,
-        is_elf: bool,
-        map: &mut HashMap<(i32, i32), char>,
-    ) {
-        let end = if is_elf { 'G' } else { 'E' };
-        let mut enemies = Vec::new();
-        for dir in [(-1, 0), (0, -1), (0, 1), (1, 0)] {
+    
+    fn check_enemy(&mut self, row: i32, col: i32, info: &CharInfo) -> bool {
+        let mut enemies = vec![];
+        for dir in [(1,0),(0,1),(-1,0),(0,-1)] {
             let new_row = row + dir.0;
             let new_col = col + dir.1;
-            let current = map.get(&(new_row, new_col)).unwrap();
-            if *current == end {
-                enemies.push((new_row, new_col))
+            let neighbor = self.map.get(&(new_row,new_col)).unwrap();
+            if let Tile::Goblin(info) = neighbor {
+                enemies.push((new_row,new_col,info.clone()));
             }
         }
-
         if enemies.is_empty() {
-            return;
-        }
-
-        if is_elf {
-            let lowesthp = self
-                .goblins
-                .iter_mut()
-                .filter(|g| enemies.contains(&(g.row, g.col)))
-                .min_by_key(|g| g.hp)
-                .unwrap()
-                .hp;
-            let mut gobs: Vec<_> = self
-                .goblins
-                .iter_mut()
-                .filter(|g| enemies.contains(&(g.row, g.col)) && g.hp == lowesthp)
-                .collect();
-            gobs.sort_by(|p1, p2| (p1.row, p1.col).cmp(&(p2.row, p2.col)));
-            let gob = &mut gobs[0];
-            let elf_atk = self.elfs.iter().nth(0).unwrap().attack;
-            gob.hp -= elf_atk;
-            if gob.hp <= 0 {
-                map.insert((gob.row, gob.col), '.');
-            }
+            false    
         } else {
-            let lowesthp = self
-                .elfs
-                .iter_mut()
-                .filter(|e| enemies.contains(&(e.row, e.col)))
-                .min_by_key(|e| e.hp)
-                .unwrap()
-                .hp;
-            let mut elfs: Vec<_> = self
-                .elfs
-                .iter_mut()
-                .filter(|e| enemies.contains(&(e.row, e.col)) && e.hp == lowesthp)
-                .collect();
-            elfs.sort_by(|p1, p2| (p1.row, p1.col).cmp(&(p2.row, p2.col)));
-            let elf = &mut elfs[0];
-            elf.hp -= 3;
-            if elf.hp <= 0 {
-                map.insert((elf.row, elf.col), '.');
-            }
+            // find enemy with lowest health
+            // enemies.iter().min_by(|e1,e2| e1.2. )
+            true
         }
-
-        self.elfs = self.elfs.iter().cloned().filter(|e| e.hp > 0).collect();
-        self.goblins = self.goblins.iter().cloned().filter(|g| g.hp > 0).collect();
     }
 
-    fn move_character(
-        &mut self,
-        row: i32,
-        col: i32,
-        is_elf: bool,
-        map: &mut HashMap<(i32, i32), char>,
-        seen: &mut HashSet<(i32, i32)>,
-    ) -> (i32, i32) {
-        let open_spots = self.find_open_spots(row, col, map);
+    fn find_next_step(&self, row:i32, col:i32, togo: (i32,i32,i32)) {
+        // let mut neighbors = vec![];
+        for dir in [(1,0),(0,1),(-1,0),(0,-1)] {
+            let new_row = row + dir.0;
+            let new_col = col + dir.1;
+            let neighbor = self.map.get(&(new_row,new_col)).unwrap();
+        }
+    }
 
-        let mut queue = VecDeque::from(open_spots);
-        let mut min_distance = i32::MAX;
-        let end = if is_elf { 'G' } else { 'E' };
-        let mut result = Vec::new();
-        let mut visited = HashSet::new();
-        while let Some((start_pos, (c_row, c_col), distance)) = queue.pop_front() {
-            if !visited.insert((c_row, c_col, start_pos.0, start_pos.1)) {
-                continue;
+    fn find_reachable(&self,row:i32, col:i32, to_find: char) ->  Vec<(i32,i32,i32)> {
+        let mut queue = VecDeque::from([(row,col)]);
+        let mut reachable:Vec<(i32,i32,i32)> = Vec::new();
+        let mut seen: HashSet<(i32,i32)> = HashSet::new();
+
+        while let Some((c_row,c_col)) = queue.pop_front() {
+            if !seen.insert((c_row,c_col)) {
+                continue
             }
 
-            for dir in [(-1, 0), (0, -1), (0, 1), (1, 0)] {
+            for dir in [(1,0),(0,1),(-1,0),(0,-1)] {
                 let new_row = c_row + dir.0;
-                let new_col = c_col + dir.1;
-                let current = map.get(&(new_row, new_col)).unwrap();
-
-                if *current == end {
-                    if distance <= min_distance {
-                        result.push((start_pos, (c_row, c_col), distance));
-                        min_distance = distance;
-                    }
-                } else if *current == '.' {
-                    queue.push_back((start_pos, (new_row, new_col), distance + 1))
+                let new_col = c_col  + dir.1;
+                let neighbor = self.map.get(&(new_row,new_col)).unwrap();
+                match to_find {
+                    'G' => {
+                        if let Tile::Goblin(_) = neighbor {
+                            let distance = (row - c_row).abs() + (col - c_col).abs();  
+                            reachable.push((c_row,c_col, distance));
+                        } else if let Tile::Open = neighbor {
+                            queue.push_back((new_row,new_col));
+                        }
+                    },  
+                    'E' => {
+                        if let Tile::Elf(_) = neighbor {
+                            let distance = (row - c_row).abs() + (col - c_col).abs();  
+                            reachable.push((c_row,c_col,distance));
+                        } else if let Tile::Open = neighbor {
+                            queue.push_back((new_row,new_col));
+                        }
+                    },
+                    _ => panic!("unknown character to find!")
                 }
             }
         }
-
-        result = result
-            .into_iter()
-            .filter(|pos| pos.2 == min_distance)
-            .collect();
-        result.sort_by(|p1, p2| {
-            (p1.1 .0, p1.1 .1)
-                .cmp(&(p2.1 .0, p2.1 .1))
-                .then((p1.0 .0, p1.0 .1).cmp(&(p2.0 .0, p2.0 .1)))
-        });
-
-        if result.is_empty() {
-            return (row, col);
+        if reachable.is_empty() {
+            return vec![]
         }
-
-        let move_to = result[0].0;
-
-        if is_elf {
-            let mut elf = self
-                .elfs
-                .iter_mut()
-                .find(|elf| elf.row == row && elf.col == col)
-                .unwrap();
-            map.insert((elf.row, elf.col), '.');
-            elf.row = move_to.0;
-            elf.col = move_to.1;
-            map.insert((elf.row, elf.col), 'E');
-            seen.insert((elf.row, elf.col));
-            (elf.row, elf.col)
-        } else {
-            let mut goblin = self
-                .goblins
-                .iter_mut()
-                .find(|goblin| goblin.row == row && goblin.col == col)
-                .unwrap();
-            //  when moving remove already moved ones
-            map.insert((goblin.row, goblin.col), '.');
-            goblin.row = move_to.0;
-            goblin.col = move_to.1;
-            map.insert((goblin.row, goblin.col), 'G');
-            seen.insert((goblin.row, goblin.col));
-            (goblin.row, goblin.col)
-        }
-    }
-
-    fn find_open_spots(
-        &self,
-        row: i32,
-        col: i32,
-        map: &HashMap<(i32, i32), char>,
-    ) -> Vec<((i32, i32), (i32, i32), i32)> {
-        let mut spots = Vec::new();
-        for dir in [(-1, 0), (0, 1), (1, 0), (0, -1)] {
-            let new_row = row + dir.0;
-            let new_col = col + dir.1;
-            let current = map.get(&(new_row, new_col)).unwrap();
-            if *current == '.' {
-                spots.push(((new_row, new_col), (new_row, new_col), 0));
-            }
-        }
-        spots
-    }
-
-    fn can_move(&self, row: i32, col: i32, is_elf: bool, map: &HashMap<(i32, i32), char>) -> bool {
-        let mut open = false;
-        for dir in [(-1, 0), (0, 1), (1, 0), (0, -1)] {
-            let new_row = row + dir.0;
-            let new_col = col + dir.1;
-            let current = map.get(&(new_row, new_col)).unwrap();
-            if is_elf && *current == 'G' {
-                return false;
-            } else if !is_elf && *current == 'E' {
-                return false;
-            }
-            if *current == '.' {
-                open = true
-            }
-        }
-        open
-    }
-
-    fn add_characters(&self, current_map: &mut HashMap<(i32, i32), char>) {
-        self.elfs.iter().for_each(|elf| {
-            current_map.insert((elf.row, elf.col), 'E');
-        });
-        self.goblins.iter().for_each(|goblin| {
-            current_map.insert((goblin.row, goblin.col), 'G');
-        });
+        let min_val = reachable.iter().map(|r| r.2).min().unwrap();
+        reachable.iter().filter(|&r| r.2 == min_val).cloned().collect()
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Elf {
+
+#[derive(Debug,Clone, Copy)]
+enum Tile {
+    Wall,
+    Open,
+    Goblin(CharInfo),
+    Elf(CharInfo),
+}
+
+#[derive(Debug,Clone, Copy)]
+struct CharInfo {
     row: i32,
-    col: i32,
+    col:i32,
     hp: i32,
-    attack: i32,
+    attack: i32
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Goblin {
-    row: i32,
-    col: i32,
-    hp: i32,
-    attack: i32,
-}
-
-impl Elf {
-    fn new(row: i32, col: i32, elf_attack: i32) -> Self {
-        Self {
-            row,
-            col,
-            hp: 200,
-            attack: elf_attack,
-        }
-    }
-}
-
-impl Goblin {
-    fn new(row: i32, col: i32) -> Self {
-        Self {
-            row,
-            col,
-            hp: 200,
-            attack: 3,
-        }
+impl CharInfo {
+    fn new(row: i32,col: i32) -> Self {
+        Self {row,col,hp:200,attack:3}
     }
 }
 
@@ -377,20 +177,15 @@ impl Q15 {
     }
 
     fn part1(&mut self) {
-        let mut elf_attack = 3;
-        loop {
-            elf_attack += 1;
-            let mut game = Game::new(elf_attack);
-            let elfs_alive = game.combat();
-            if !elfs_alive {
-                continue;
-            }
+        let mut game = Game::new();
+        game.combat();
 
-            break;
-        }
     }
 
-    fn part2(&mut self) {}
+    fn part2(&mut self) {
+        
+    }
+
 }
 
 impl Runner for Q15 {
@@ -399,8 +194,9 @@ impl Runner for Q15 {
     }
 }
 
+
 #[cfg(test)]
-mod test {
+mod test{
     #[test]
     fn Q15() {
         assert_eq!(1, 1);
