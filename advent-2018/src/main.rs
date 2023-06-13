@@ -9,6 +9,7 @@ use q13::Q13;
 use q14::Q14;
 use q15::Q15;
 use q16::Q16;
+use q17::Q17;
 use q2::Q2;
 use q3::Q3;
 use q4::Q4;
@@ -26,6 +27,7 @@ mod q13;
 mod q14;
 mod q15;
 mod q16;
+mod q17;
 mod q2;
 mod q3;
 mod q4;
@@ -54,6 +56,7 @@ fn main() {
     let mut q14 = Q14::new();
     let mut q15 = Q15::new();
     let mut q16 = Q16::new();
+    let mut q17 = Q17::new();
 
     match args[1].as_str() {
         "cp" => copy_file(args[2].as_str()).unwrap(),
@@ -73,6 +76,7 @@ fn main() {
         "14" => q14.run(),
         "15" => q15.run(),
         "16" => q16.run(),
+        "17" => q17.run(),
         _ => panic!("invalid instruction!"),
     }
 }

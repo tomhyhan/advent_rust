@@ -1,3 +1,4 @@
+// again with Hashmap
 use advent_2018::{Runner, get_file};
 use regex:: Regex;
 
@@ -30,25 +31,7 @@ impl Q16 {
         let memory = Memory::new();
         // register[instruction[3]] = num; 
         let mut register = vec![0,0,0,0];
-        //  Eqri - 11, Gtrr - 8, Gtri - 10, Eqrr - 5, Eqir - 14
-        //  Banr -  1, Bani - 0, Bori -  4,  Gtir - 6, Setr - 3
-        //  Seti - 9,  Borr - 13, Addr - 15, Muli - 2, Addi - 7
-        // Ops::Addr(register[instruction[1]], register[instruction[2]]), 
-        // Ops::Addi(register[instruction[1]], instruction[2] as i32),
-        // Ops::Mulr(register[instruction[1]], register[instruction[2]]),
-        // Ops::Muli(register[instruction[1]], instruction[2] as i32),
-        // Ops::Banr(register[instruction[1]], register[instruction[2]]),
-        // Ops::Bani(register[instruction[1]], instruction[2] as i32),
-        // Ops::Borr(register[instruction[1]], register[instruction[2]]),
-        // Ops::Bori(register[instruction[1]], instruction[2] as i32),
-        // Ops::Setr(register[instruction[1]]),
-        // Ops::Seti(instruction[1] as i32),
-        // Ops::Gtir(instruction[1] as i32, register[instruction[2]]),
-        // Ops::Gtri(register[instruction[1]], instruction[2] as i32),
-        // Ops::Gtrr(register[instruction[1]], register[instruction[2]]),
-        // Ops::Eqir(instruction[1] as i32, register[instruction[2]]),
-        // Ops::Eqri(register[instruction[1]], instruction[2] as i32),
-        // Ops::Eqrr(register[instruction[1]], register[instruction[2]]),
+        //  
         samples.tests.iter().skip(1).for_each(|instruction| {
             let num;
             match instruction[0] {
