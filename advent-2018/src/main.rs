@@ -18,6 +18,7 @@ use q6::Q6;
 use q7::Q7;
 use q8::Q8;
 use q9::Q9;
+use q18::Q18;
 
 mod q1;
 mod q10;
@@ -36,6 +37,7 @@ mod q6;
 mod q7;
 mod q8;
 mod q9;
+mod q18;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -57,6 +59,7 @@ fn main() {
     let mut q15 = Q15::new();
     let mut q16 = Q16::new();
     let mut q17 = Q17::new();
+    let mut q18 = Q18::new();
 
     match args[1].as_str() {
         "cp" => copy_file(args[2].as_str()).unwrap(),
@@ -77,6 +80,7 @@ fn main() {
         "15" => q15.run(),
         "16" => q16.run(),
         "17" => q17.run(),
+        "18" => q18.run(),
         _ => panic!("invalid instruction!"),
     }
 }

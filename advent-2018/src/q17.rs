@@ -115,28 +115,28 @@ impl Reservoir {
                     while vec!['|', '~'].contains(&self.grid[y][(tmp-self.min_x+1) as usize]) {
                         self.grid[y][(tmp-self.min_x+1) as usize] = '~';
                         tmp += 1;
-                        if self.grid[y-1][(tmp-self.min_x) as usize] == '|' {
-                            to_visit.push_back((y-1,tmp))
-                        }
+                        // if self.grid[y-1][(tmp-self.min_x) as usize] == '|' {
+                        //     to_visit.push_back((y-1,tmp))
+                        // }
                     }
                     while vec!['|', '~'].contains(&self.grid[y][(tmp-self.min_x-1) as usize]) {
                         self.grid[y][(tmp-self.min_x-1) as usize] = '~';
                         tmp -= 1;
-                        if self.grid[y-1][(tmp-self.min_x) as usize] == '|' {
-                            to_visit.push_back((y-1,tmp))
-                        }
+                        // if self.grid[y-1][(tmp-self.min_x) as usize] == '|' {
+                        //     to_visit.push_back((y-1,tmp))
+                        // }
                     }
                 }
             } 
         }
         let mut cnt = 0;
-        // for item in self.grid.iter() {
-        //     println!("{:?}", item.iter().collect::<String>());
-        //     if cnt == 500 {
-        //         break
-        //     }
-        //     cnt += 1
-        // }
+        for item in self.grid.iter() {
+            println!("{:?}", item.iter().collect::<String>());
+            if cnt == 500 {
+                break
+            }
+            cnt += 1
+        }
         // // 27213
         let mut r = 0;
         let mut f = 0;
