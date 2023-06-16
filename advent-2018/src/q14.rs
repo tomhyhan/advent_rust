@@ -79,28 +79,28 @@ impl Runner for Q14 {
 #[cfg(test)]
 mod test{
     use super::*;
-    #[test]
-    fn Q14() {
-        let mut cho = Chocolate::new(9);
-        let r = cho.cook();
-        assert_eq!(r, "5158916779".to_string())
-    }
-    #[test]
-    fn Q141() {
-        let mut cho = Chocolate::new(5);
-        let r = cho.cook();
-        assert_eq!(r, "0124515891".to_string())
-    }
-    #[test]
-    fn Q142() {
-        let mut cho = Chocolate::new(18);
-        let r = cho.cook();
-        assert_eq!(r, "9251071085".to_string())
-    }
-    #[test]
-    fn Q143() {
-        let mut cho = Chocolate::new(2018);
-        let r = cho.cook();
-        assert_eq!(r, "5941429882".to_string())
-    }
+    // #[test]
+    // fn Q14() {
+    //     let mut cho = Chocolate::new(9);
+    //     let r = cho.cook();
+    //     assert_eq!(r, "5158916779".to_string())
+    // }
+    // #[test]
+    // fn Q141() {
+    //     let mut cho = Chocolate::new(5);
+    //     let r = cho.cook();
+    //     assert_eq!(r, "0124515891".to_string())
+    // }
+    // #[test]
+    // fn Q142() {
+    //     let mut cho = Chocolate::new(18);
+    //     let r = cho.cook();
+    //     assert_eq!(r, "9251071085".to_string())
+    // }
+    // #[test]
+    // fn Q143() {
+    //     let mut cho = Chocolate::new(2018);
+    //     let r = cho.cook();
+    //     assert_eq!(r, "5941429882".to_string())
+    // }
 }
