@@ -1,3 +1,4 @@
+// again
 use std::collections::HashSet;
 
 use advent_2018::{Runner, get_file};
@@ -24,7 +25,7 @@ impl Memory {
     }
 
     fn test(&self, mut register: Vec<i64>, instruction: Vec<usize>, result: Vec<i64>) -> i64 {
-
+        // String { format!("u8: {}", 3) };
         0
     }
 
