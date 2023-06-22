@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, BinaryHeap};
 
 use advent_2018::{Runner, get_file};
 
@@ -45,7 +45,7 @@ impl Maze {
         let depth = depth.parse::<usize>().unwrap();
         let target_y = target_y.parse::<usize>().unwrap();
         let target_x = target_x.parse::<usize>().unwrap();
-        let extra = 7;
+        let extra = 1000;
         let map = vec![vec![Erosion::Empty;target_x+1+extra]; target_y+1+extra];
         Maze {map, target_y, target_x, depth, extra}
     }
@@ -72,6 +72,9 @@ impl Maze {
                         self.map[row][col] = region_type 
                     }
                     (y,x)=> {
+                        if y == self.target_y && x == self.target_x {
+                            continue
+                        }
                         let g_index = erosions[row-1][col] * erosions[row][col-1];
                         let region_type = self.get_region_type(g_index, &mut erosions, row, col);
                         self.map[row][col] = region_type 
@@ -108,10 +111,12 @@ impl Q22 {
     fn part1(&mut self) {
         let mut maze = Maze::new();
         maze.drawing(0);
-        println!("{:?}", maze.map);
+        // println!("{:?}", maze.map);
         let mut risk = 0;
-        for row in 0..maze.map.len() {
-            for col in 0..maze.map[0].len() {
+        // println!("{:?}", maze.target_y);
+        // println!("{:?}", maze.target_x);
+        for row in 0..=maze.target_y {
+            for col in 0..=maze.target_x {
                 match maze.map[row][col] {
                     Erosion::Wet => risk += 1,
                     Erosion::Narrow => risk += 2,
@@ -125,7 +130,7 @@ impl Q22 {
     fn part2(&mut self) {
         let mut maze = Maze::new();
         maze.drawing(7);
-        println!("{:?}", maze.map);
+        // println!("{:?}", maze.map);
         dijkstra(maze.map, maze.target_y, maze.target_x);
     }
 
@@ -137,62 +142,56 @@ fn get_weight(y:i32,x:i32,target_y:i32,target_x:i32) -> i32 {
 fn dijkstra(map: Vec<Vec<Erosion>>, target_y:usize, target_x:usize) {
     let mut queue = HashSet::new();
     let mut visited = HashMap::new();
-    queue.insert((0,0,Equipment::Torch,0,get_weight(0, 0, target_y as i32, target_x as i32)));
+    queue.insert((0,0,0,Equipment::Torch));
     // visited.insert((0,0), 0);
     let mut cnt = 0;
+    let equips = [Equipment::Neither, Equipment::Torch, Equipment::Climb];
+    let areas = [Erosion::Rocky, Erosion::Wet, Erosion::Narrow];
+
     loop {
-        let current = queue.iter().min_by(|x,y|x.4.cmp(&y.4)).unwrap().clone();
-        let (row, col, equip, distance, _) = current;
-        // println!("{:?}", qu);
+        let current = queue.iter().min_by(|x,y|x.0.cmp(&y.0)).unwrap().clone();
+        let (minutes, row, col, equip) = current;
+
         if !queue.remove(&current) {
             panic!("something wrong!")
         }
-        if let Some(old_distance) = visited.get(&(row, col)){
-            if *old_distance <= distance {
+        if let Some(old_minutes) = visited.get(&(row, col, equip)){
+            if *old_minutes <= minutes {
                 continue
             }
         }
+        visited.insert((row,col, equip), minutes);
 
-        visited.insert((row,col), distance);
-
-        if row == target_y && col == target_x {
-            println!("distance {:?}", distance);
-            println!("distance {:?}", equip);
-            if cnt == 3 {
-                break
-            }
-            cnt+=1;
+        if row == target_y && col == target_x && equip == Equipment::Torch {
+            println!("distance {:?}", minutes);
+            println!("equip {:?}", equip);
+            break                
         }
-        let equips = [Equipment::Neither, Equipment::Torch, Equipment::Climb];
-        let areas = [Erosion::Rocky, Erosion::Wet, Erosion::Narrow];
+
         for i in  0..3{
-            if equips[i] != equip && areas[i] != map[row][col] {
-                queue.insert((row, col, equips[i].clone(), distance + 7, distance + 7 +  get_weight(row as i32, col as i32, target_y as i32, target_x as i32) ));
+            // areas[i] != map[row][col]
+            if equips[i] != equip && areas[i] != map[row][col]{
+                queue.insert((minutes +7, row, col, equips[i].clone()));
             }
-            //  0 -> rocky,  1 -> wet   2 -> narrow
-            //  0 -> neither 1 -> torch 2 -> climb
-            // for i in range(3):
-            //      if i != 1 and i != 0:                 // i =0; true and 
-            //          heapq.heappush(queue, (minutes + 7, x, y, i))
-            
-            //      if i != cannot and i != risk(x, y):                 // i =0; true and 
-            // if tool != equip && 
         }
         
         
-        for (dir_y, dir_x) in [(1,0), (-1,0),(0,1),(0,-1)] {
-            let n_y = row as i32+ dir_y;
+        for (dir_y, dir_x) in [(-1,0), (1,0),(0,-1),(0,1)] {
+            let n_y = row as i32 + dir_y;
             let n_x = col as i32 + dir_x;
-            if n_y < 0 || n_y > target_y as i32+ 7 || n_x < 0 || n_x > target_x as i32 + 7 {
+            // if n_y < 0 || n_x < 0  || n_y > target_y as i32+ 90 || n_x > target_x as i32 + 90{
+            //     continue
+            // } 
+            if n_y < 0 {
                 continue
-            } 
+            }
+            if n_x < 0 {
+                continue
+            }
             let n_y = n_y as usize;
             let n_x = n_x as usize;
             let neighbor = map[n_y][n_x];
 
-            let current_distance = distance;
-            // println!("{:?}", neighbor);
-            // println!("{:?}", equip);
             match neighbor {
                 Erosion::Rocky => {if equip == Equipment::Neither {continue}}
                 Erosion::Wet => {if equip == Equipment::Torch {continue}}
@@ -200,16 +199,14 @@ fn dijkstra(map: Vec<Vec<Erosion>>, target_y:usize, target_x:usize) {
                 Erosion::Empty => {}
             }
             
-            queue.insert((n_y, n_x, equip.clone(), current_distance + 1, current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32) ));
+            queue.insert((minutes + 1, n_y, n_x, equip.clone()));
         }
-        println!("{:?}", queue);
-        // break
     }
 }
 
 impl Runner for Q22 {
     fn run(&mut self) {
-        // self.part1();
+        self.part1();
         self.part2();
     }
 }
@@ -225,67 +222,67 @@ mod test{
 
 
  // match equip {
-            //     Equipment::Torch => {
-            //         match neighbor {
-            //             Erosion::Wet => {
-            //                 current_distance += 1 + 7;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,Equipment::Climb,current_distance, current_weight));
-            //                     queue.insert((n_y,n_x,Equipment::Neither,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             }
-            //             _ => {
-            //                 current_distance += 1;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     Equipment::Climb => {
-            //         match neighbor {
-            //             Erosion::Narrow => {
-            //                 current_distance += 1 + 7;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,Equipment::Torch,current_distance, current_weight));
-            //                     queue.insert((n_y,n_x,Equipment::Neither,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             }
-            //             _ => {
-            //                 current_distance += 1;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     Equipment::Neither => {
-            //         match neighbor {
-            //             Erosion::Rocky=> {
-            //                 current_distance += 1 + 7;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,Equipment::Torch,current_distance, current_weight));
-            //                     queue.insert((n_y,n_x,Equipment::Climb,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             } 
-            //             _ => {
-            //                 current_distance += 1;
-            //                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
-            //                 if old_distance > current_distance {
-            //                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
-            //                     visited.insert((n_y,n_x), current_distance);
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+//     Equipment::Torch => {
+//         match neighbor {
+//             Erosion::Wet => {
+//                 current_distance += 1 + 7;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,Equipment::Climb,current_distance, current_weight));
+//                     queue.insert((n_y,n_x,Equipment::Neither,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             }
+//             _ => {
+//                 current_distance += 1;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             }
+//         }
+//     }
+//     Equipment::Climb => {
+//         match neighbor {
+//             Erosion::Narrow => {
+//                 current_distance += 1 + 7;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,Equipment::Torch,current_distance, current_weight));
+//                     queue.insert((n_y,n_x,Equipment::Neither,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             }
+//             _ => {
+//                 current_distance += 1;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             }
+//         }
+//     }
+//     Equipment::Neither => {
+//         match neighbor {
+//             Erosion::Rocky=> {
+//                 current_distance += 1 + 7;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,Equipment::Torch,current_distance, current_weight));
+//                     queue.insert((n_y,n_x,Equipment::Climb,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             } 
+//             _ => {
+//                 current_distance += 1;
+//                 let current_weight = current_distance + get_weight(n_y as i32, n_x as i32, target_y as i32, target_x as i32);
+//                 if old_distance > current_distance {
+//                     queue.insert((n_y,n_x,equip,current_distance, current_weight));
+//                     visited.insert((n_y,n_x), current_distance);
+//                 }
+//             }
+//         }
+//     }
+// }
