@@ -141,8 +141,6 @@ impl Q5 {
     fn part2(&mut self) {
         
     }
-
-    fn part2(&mut self) {}
 }
 
 impl Runner for Q5 {
