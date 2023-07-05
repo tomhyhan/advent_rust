@@ -1,44 +1,41 @@
-use advent_2019::{Runner, get_file};
+use advent_2019::{get_file, Runner};
 
-pub struct Q2 {
-
-}
+pub struct Q2 {}
 
 #[derive(Debug)]
 struct Program {
-    integers: Vec<usize>
+    integers: Vec<usize>,
 }
 
 impl Program {
     fn new() -> Self {
         let content = get_file("src/input/q2.txt").unwrap();
-        let integers: Vec<usize>= content.split(",").map(|num| num.parse().unwrap()).collect();
-        
-        Program {integers}
+        let integers: Vec<usize> = content.split(",").map(|num| num.parse().unwrap()).collect();
+
+        Program { integers }
     }
 
-    fn run_program(&mut self) -> usize{
+    fn run_program(&mut self) -> usize {
         for i in (0..self.integers.len()).step_by(4) {
             if self.integers[i] == 99 {
-                break
+                break;
             }
-            let input1 = self.integers[self.integers[i+1]];
-            let input2 = self.integers[self.integers[i+2]];
+            let input1 = self.integers[self.integers[i + 1]];
+            let input2 = self.integers[self.integers[i + 2]];
             match self.integers[i] {
                 1 => {
-                    let output_integer = self.integers[i+3];
+                    let output_integer = self.integers[i + 3];
                     self.integers[output_integer] = input1 + input2;
-                },
+                }
                 2 => {
-                    let output_integer = self.integers[i+3];
+                    let output_integer = self.integers[i + 3];
                     self.integers[output_integer] = input1 * input2;
-                },
-                _ => panic!("invalid opcode")
+                }
+                _ => panic!("invalid opcode"),
             }
         }
         self.integers[0]
     }
-    
 }
 
 impl Q2 {
@@ -67,22 +64,20 @@ impl Q2 {
             }
         }
     }
-
 }
 
 impl Runner for Q2 {
     fn part1(&mut self) {
         self.part1()
     }
-    
+
     fn part2(&mut self) {
         self.part2()
     }
 }
 
-
 #[cfg(test)]
-mod test{
+mod test {
     #[test]
     fn Q2() {
         assert_eq!(1, 1);

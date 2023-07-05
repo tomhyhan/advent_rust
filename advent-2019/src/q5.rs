@@ -1,18 +1,20 @@
-use advent_2019::{Runner, get_file};
-
+use advent_2019::{get_file, Runner};
 
 #[derive(Debug)]
 struct Program {
     integers: Vec<i32>,
-    a_pointer: usize
+    a_pointer: usize,
 }
 
 impl Program {
     fn new() -> Self {
         let content = get_file("src/input/q5.txt").unwrap();
-        let integers: Vec<i32>= content.split(",").map(|num| num.parse().unwrap()).collect();
+        let integers: Vec<i32> = content.split(",").map(|num| num.parse().unwrap()).collect();
         let a_pointer = 0;
-        Program {integers, a_pointer}
+        Program {
+            integers,
+            a_pointer,
+        }
     }
 
     // refactoring
@@ -41,9 +43,8 @@ impl Program {
         }    
         (input1, input2)
     }
-    
-    fn run_program(&mut self, mut output:i32) {
-        
+
+    fn run_program(&mut self, mut output: i32) {
         loop {
             let tmp = self.integers[self.a_pointer];
             let opcode = self.integers[self.a_pointer] %100;
@@ -60,16 +61,16 @@ impl Program {
                     let output_integer = self.integers[self.a_pointer+3];
                     self.integers[output_integer as usize] = input1 + input2;
                     self.a_pointer += 4;
-                },
+                }
                 2 => {
                     let (input1, input2) = self.param_mode_inputs(param1, param2);
                     let output_integer = self.integers[self.a_pointer+3];
                     self.integers[output_integer as usize] = input1 * input2;
                     self.a_pointer += 4;
-                },
+                }
                 3 => {
-                    let i = self.integers[self.a_pointer+1] as usize;
-                    self.integers[i] = output; 
+                    let i = self.integers[self.a_pointer + 1] as usize;
+                    self.integers[i] = output;
                     self.a_pointer += 2;
                 }
                 4 => {
@@ -118,17 +119,13 @@ impl Program {
                     panic!("invalid opcode")
                 }
             }
-        } 
+        }
 
         println!("{:?}", output);
     }
-    
 }
 
-
-pub struct Q5 {
-
-}
+pub struct Q5 {}
 
 impl Q5 {
     pub fn new() -> Self {
@@ -145,21 +142,21 @@ impl Q5 {
         
     }
 
+    fn part2(&mut self) {}
 }
 
 impl Runner for Q5 {
     fn part1(&mut self) {
         self.part1()
     }
-    
+
     fn part2(&mut self) {
         self.part2()
     }
 }
 
-
 #[cfg(test)]
-mod test{
+mod test {
     #[test]
     fn Q5() {
         assert_eq!(1, 1);
