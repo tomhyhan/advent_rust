@@ -16,72 +16,53 @@ impl Program {
     }
 
     // refactoring
-    fn param_mode_inputs(&self, param1: i32, param2: i32) {
-        // do something
+    fn param_mode_inputs(&self, param1: i32, param2: i32) -> (i32,i32) {
+        let input1;
+        let input2;
+        match (param1, param2) {
+            (0,1) => {
+                input1 = self.integers[self.integers[self.a_pointer+1] as usize];
+                input2 = self.integers[self.a_pointer + 2];    
+            },
+            (1,0) => {
+                input1 = self.integers[self.a_pointer + 1];
+                // might fails if opcode is 4 and 2nd param is larger
+                // than self.integers.len()
+                input2 = self.integers[self.integers[self.a_pointer+2] as usize]  
+            },
+            (1,1) => {
+                input1 = self.integers[self.a_pointer + 1];
+                input2 = self.integers[self.a_pointer + 2];    
+            },
+            _ => {
+                input1 = self.integers[self.integers[self.a_pointer+1] as usize];
+                input2 = self.integers[self.integers[self.a_pointer+2] as usize]  
+            }
+        }    
+        (input1, input2)
     }
     
     fn run_program(&mut self, mut output:i32) {
         
         loop {
-            if self.integers[self.a_pointer] == 99 {
-                break
-            }
-            println!("{:?}", self.integers[self.a_pointer]);
-            println!("pointer - {:?}", self.a_pointer);
+            let tmp = self.integers[self.a_pointer];
             let opcode = self.integers[self.a_pointer] %100;
             self.integers[self.a_pointer] /= 100;
-            let param_1 = self.integers[self.a_pointer] %10;
+            let param1 = self.integers[self.a_pointer] %10;
             self.integers[self.a_pointer] /= 10;
-            let param_2 = self.integers[self.a_pointer] % 10;
+            let param2 = self.integers[self.a_pointer] % 10;
             self.integers[self.a_pointer] /= 10;
-            println!("{:?} {} {}", opcode, param_1, param_2);
+            self.integers[self.a_pointer] = tmp;
+
             match opcode  {
                 1 => {
-                    let input1;
-                    let input2;
-                    match (param_1, param_2) {
-                        (0,1) => {
-                            input1 = self.integers[self.integers[self.a_pointer+1] as usize];
-                            input2 = self.integers[self.a_pointer + 2];    
-                        },
-                        (1,0) => {
-                            input1 = self.integers[self.a_pointer + 1];
-                            input2 = self.integers[self.integers[self.a_pointer+2] as usize]  
-                        },
-                        (1,1) => {
-                            input1 = self.integers[self.a_pointer + 1];
-                            input2 = self.integers[self.a_pointer + 2];    
-                        },
-                        _ => {
-                            input1 = self.integers[self.integers[self.a_pointer+1] as usize];
-                            input2 = self.integers[self.integers[self.a_pointer+2] as usize];    
-                        }
-                    }
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
                     let output_integer = self.integers[self.a_pointer+3];
                     self.integers[output_integer as usize] = input1 + input2;
                     self.a_pointer += 4;
                 },
                 2 => {
-                    let input1;
-                    let input2;
-                    match (param_1, param_2) {
-                        (0,1) => {
-                            input1 = self.integers[self.integers[self.a_pointer+1] as usize];
-                            input2 = self.integers[self.a_pointer + 2];    
-                        },
-                        (1,0) => {
-                            input1 = self.integers[self.a_pointer + 1];
-                            input2 = self.integers[self.integers[self.a_pointer+2] as usize]  
-                        },
-                        (1,1) => {
-                            input1 = self.integers[self.a_pointer + 1];
-                            input2 = self.integers[self.a_pointer + 2];    
-                        },
-                        _ => {
-                            input1 = self.integers[self.integers[self.a_pointer+1] as usize];
-                            input2 = self.integers[self.integers[self.a_pointer+2] as usize];    
-                        }
-                    }
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
                     let output_integer = self.integers[self.a_pointer+3];
                     self.integers[output_integer as usize] = input1 * input2;
                     self.a_pointer += 4;
@@ -92,52 +73,48 @@ impl Program {
                     self.a_pointer += 2;
                 }
                 4 => {
-                    output = self.integers[self.integers[self.a_pointer+1] as usize];
-                    println!("{:?}", output);
+                    let (input1, _) = self.param_mode_inputs(param1, param2);
+                    output = input1;
                     self.a_pointer += 2;
                 }
                 5 => {
-                    let param1 = self.integers[self.a_pointer+1];
-                    if param1 != 0 {
-                        self.a_pointer = self.integers[self.a_pointer+2] as usize;
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
+                    if input1 != 0 {
+                        self.a_pointer = input2 as usize;
                     } else {
                         self.a_pointer += 3;
                     }
                 }
                 6 => {
-                    let param1 = self.integers[self.a_pointer+1];
-                    if param1 == 0 {
-                        self.a_pointer = self.integers[self.a_pointer+2] as usize;
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
+                    if input1 == 0 {
+                        self.a_pointer = input2 as usize;
                     } else {
                         self.a_pointer += 3;
                     }
                 }
                 7 => {
-                    let param1 = self.integers[self.a_pointer+1];
-                    let param2 = self.integers[self.a_pointer+2];
-                    if param1 < param2 {
-                        self.a_pointer = self.integers[self.a_pointer+2] as usize;
-                        let output_integer = self.integers[self.a_pointer+3];
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
+                    let output_integer = self.integers[self.a_pointer+3];
+                    if input1 < input2 {
                         self.integers[output_integer as usize] = 1
                     } else {
-                        let output_integer = self.integers[self.a_pointer+3];
-                        self.integers[output_integer as usize] = 0                    }
+                        self.integers[output_integer as usize] = 0
+                    }
                     self.a_pointer += 4;
                 }
                 8 => {
-                    let param1 = self.integers[self.a_pointer+1];
-                    let param2 = self.integers[self.a_pointer+2];
-                    if param1 == param2 {
-                        self.a_pointer = self.integers[self.a_pointer+2] as usize;
-                        let output_integer = self.integers[self.a_pointer+3];
+                    let (input1, input2) = self.param_mode_inputs(param1, param2);
+                    let output_integer = self.integers[self.a_pointer+3];
+                    if input1 == input2 {
                         self.integers[output_integer as usize] = 1
                     } else {
-                        let output_integer = self.integers[self.a_pointer+3];
-                        self.integers[output_integer as usize] = 0                    }
+                        self.integers[output_integer as usize] = 0
+                    }
                     self.a_pointer += 4;
                 }
+                99 => break,
                 _ => {
-                    println!("{:?}", opcode);
                     panic!("invalid opcode")
                 }
             }
@@ -160,7 +137,7 @@ impl Q5 {
 
     fn part1(&mut self) {
         let mut program = Program::new();
-        program.run_program(1);
+        program.run_program(5);
 
     }
 
