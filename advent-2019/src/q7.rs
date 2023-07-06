@@ -57,8 +57,8 @@ impl Program {
             },
             (1,0) => {
                 input1 = self.integers[self.a_pointer + 1];
-                // might fails if opcode is 4 and 2nd param is larger
-                // than self.integers.len()
+                // this is sepcial case for opcode 4
+                // too lazy to change code only for opcode 4
                 if self.integers[self.a_pointer+2] < self.integers.len() as i64 {
                     input2 = self.integers[self.integers[self.a_pointer+2] as usize]  
                 } else {
