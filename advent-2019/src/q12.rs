@@ -123,23 +123,10 @@ impl Moon {
     }
 }
 
-//  10 4  => 2 10 => 0 2 => y==0: x
-//  4 10 =>  10%4=2 4 => 0 2 => 
-
 fn gcd(x:i64,y:i64) -> i64 {
     if y == 0 {x} else { gcd(y,x%y)}
 }
 
-// fn gcd(x: usize, y: usize) -> usize {
-//     let mut x = x;
-//     let mut y = y;
-//     while y != 0 {
-//         let t = y;
-//         y = x % y;
-//         x = t;
-//     }
-//     x
-// }
 pub struct Q12 {
 
 }
@@ -167,7 +154,6 @@ impl Q12 {
         // lcm should be better, but around the same
         let gcd = gcd(x,y) * gcd(y,z);
         println!("{:?}", x  * y * z / gcd);
-        // println!("{:?}", ((x / gcd) * (y / gcd) * (z / gcd)))
     }
 
 }
