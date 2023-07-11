@@ -2,7 +2,7 @@ use std::{collections::{HashMap, HashSet}, f64::consts::PI};
 
 use advent_2019::{Runner, get_file};
 
-pub struct Q9 {
+pub struct Q10 {
 
 }
 #[derive(Debug)]
@@ -95,9 +95,9 @@ impl Stations {
     }
 }
 
-impl Q9 {
+impl Q10 {
     pub fn new() -> Self {
-        Q9 {}
+        Q10 {}
     }
 
     fn part1(&mut self) {
@@ -115,7 +115,7 @@ impl Q9 {
 
 }
 
-impl Runner for Q9 {
+impl Runner for Q10 {
     fn part1(&mut self) {
         self.part1()
     }
