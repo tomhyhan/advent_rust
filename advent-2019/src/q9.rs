@@ -36,19 +36,26 @@ impl Stations {
         Self {map, max_row, min_row, max_col, min_col}
     }
 
-    fn find_200th_position(&self) {
-        let x = -1.0;
-        let y = 1.0;
-        //  1 1 45 0.7| 1 -1 -45 5.4| -1 -1  -135 3.9| -1 1 135 2.3
-        let angle = f64::atan2(y, x);
-        println!("The angle is: {}", angle);
-        let angle_degrees = f64::to_degrees(angle);
-        println!("The angle in degrees is: {}", angle_degrees);
-        println!("The pi is: {}",  angle );
-        println!("The pi is: {}",  angle + 2.0 * PI);
+    fn find_200th_position(&self, seen: HashSet<(i32,i32)>) -> (i32,i32) {
+
+        let mut sort = vec![];
+        for (row,col) in seen.iter() {
+            let angle = f64::atan2(*row as f64, *col as f64);
+            let mut angle_degrees = f64::to_degrees(angle);
+            if angle_degrees > 180.0/2.0 {
+                angle_degrees -= 2.0*180.0
+            }
+            sort.push((angle_degrees, (row,col)))
+        }
+        
+        sort.sort_by(|x,y|y.0.partial_cmp(&x.0).unwrap()); 
+        let y = *sort[199].1.0;
+        let x = *sort[199].1.1;
+        (y,x)
+
     }
 
-    fn find_best_station(&self) -> i32 {
+    fn find_best_station(&self) -> (i32, i32, i32, HashSet<(i32, i32)>) {
         let mut max_visible = (0,0,0,HashSet::new());
         for (row, col) in self.map.keys() {
             let (num, seen) = self.count_visible_stations(*row, *col);
@@ -56,8 +63,7 @@ impl Stations {
                 max_visible = (num, *row, *col, seen)
             }
         }
-        println!("{:?}", max_visible);
-        max_visible.0
+        max_visible
     }
 
     fn gcd(&self, mut x:i32, mut y:i32) -> i32{
@@ -82,7 +88,7 @@ impl Stations {
             let diff1 = neighbor_row - row;
             let diff2 = neighbor_col - col;
             let gcd = self.gcd(diff1, diff2);
-            let commons_distance = (diff1 / gcd, diff2 / gcd);
+            let commons_distance = (-diff1 /gcd, diff2 / gcd);
             unique_station.insert(commons_distance);
         }
         (unique_station.iter().count() as i32, unique_station)
@@ -101,7 +107,10 @@ impl Q9 {
 
     fn part2(&mut self) {
         let stations = Stations::new();
-        stations.find_200th_position();
+        let result = stations.find_best_station();
+        let (row,col) = stations.find_200th_position(result.3);
+        println!("{:?}",stations.map.get(&(result.1 - row, result.2 + col)));
+        // 4 2 
     }
 
 }
@@ -125,7 +134,7 @@ mod test{
     }
 }
 
-
+// ;p
 // #[derive(Debug)]
 // struct Stations {
 //     map: HashMap<(i32,i32), char>,
