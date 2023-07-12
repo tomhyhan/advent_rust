@@ -49,13 +49,10 @@ impl Program {
     fn run_program(&mut self, mut output: i64) {
         // further refactoring is possible
         loop {
-            if self.integers[self.a_pointer] == 99 {
-                break
-            }
             let tmp = self.integers[self.a_pointer];
-            let opcode = self.integers[self.a_pointer] %10;
-            self.integers[self.a_pointer] /= 100;
-            let param1 = self.integers[self.a_pointer] %10;
+            let opcode = self.integers[self.a_pointer] % 100;
+            self.integers[self.a_pointer] /= 100; 
+            let param1 = self.integers[self.a_pointer] % 10;
             self.integers[self.a_pointer] /= 10;
             let param2 = self.integers[self.a_pointer] % 10;
             self.integers[self.a_pointer] /= 10;
@@ -135,14 +132,14 @@ impl Program {
                     self.relative_base = (self.relative_base as i64 + input1) as usize;
                     self.a_pointer += 2;
                 }
-                // 99 => break,
+                99 => break,
                 _ => {
                     panic!("invalid opcode")
                 }
             }
         }
 
-        println!("{:?}", output);
+        println!("output: {:?}", output);
     }
 }
 
@@ -158,8 +155,7 @@ impl Q9 {
 
     fn part1(&mut self) {
         let mut program = Program::new();
-        let output = program.run_program(2);
-        println!("{:?}", output);
+        program.run_program(2);
     }
 
     fn part2(&mut self) {
