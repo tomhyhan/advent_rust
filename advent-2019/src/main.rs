@@ -12,6 +12,7 @@ use q7::Q7;
 use q8::Q8;
 use q9::Q9;
 use q10::Q10;
+use q11::Q11;
 use q12::Q12;
 
 mod q1;
@@ -24,6 +25,7 @@ mod q7;
 mod q8;
 mod q9;
 mod q10;
+mod q11;
 mod q12;
 
 fn main() {
@@ -39,6 +41,7 @@ fn main() {
     let mut q8 = Q8::new();
     let mut q9 = Q9::new();
     let mut q10 = Q10::new();
+    let mut q11 = Q11::new();
     let mut q12 = Q12::new();
 
     match args[1].as_str() {
@@ -53,6 +56,7 @@ fn main() {
         "8" => q8.run(),
         "9" => q9.run(),
         "10" => q10.run(),
+        "11" => q11.run(),
         "12" => q12.run(),
         _ => panic!("invalid instruction!"),
     }
