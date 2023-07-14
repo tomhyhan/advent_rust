@@ -1,6 +1,7 @@
 use std::{fs, error::Error};
 use std::time::Instant;
 
+
 pub trait Runner {
     fn run(&mut self) -> () {
         let start = Instant::now();
