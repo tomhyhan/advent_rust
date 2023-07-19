@@ -1,7 +1,7 @@
 use advent_2019::get_file;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Program {
     pub integers: Vec<i64>,
     a_pointer: usize,
@@ -11,7 +11,7 @@ pub struct Program {
 // 1219070632396864
 impl Program {
     pub fn new() -> Self {
-        let content = get_file("src/input/q13.txt").unwrap();
+        let content = get_file("src/input/q15.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
