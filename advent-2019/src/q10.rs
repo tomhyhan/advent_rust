@@ -134,7 +134,7 @@ mod test{
     }
 }
 
-// ;p
+// First Try Failed ;p
 // #[derive(Debug)]
 // struct Stations {
 //     map: HashMap<(i32,i32), char>,

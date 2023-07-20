@@ -20,7 +20,6 @@ impl Jupiter {
             let (x,y,z) = (nums[0].as_str().parse::<i64>().unwrap(),
                             nums[1].as_str().parse::<i64>().unwrap(),
                             nums[2].as_str().parse::<i64>().unwrap());
-            // println!("{:?}", (x,y,z))
             Moon::new(x,y,z)
         }).collect();
         Self {moons}
