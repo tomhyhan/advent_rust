@@ -31,9 +31,9 @@ struct Cards {
 impl Cards {
     fn new(num_of_cards:i64, card_pos:i64) -> Self {
         let mut stack = Vec::new();
-        for i in 0..num_of_cards {
-            stack.push(i)
-        }
+        // for i in 0..num_of_cards {
+        //     stack.push(i)
+        // }
         Self {stack, card_pos}
     }
 
