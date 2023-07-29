@@ -49,23 +49,21 @@ impl Regulations {
     }
 
     fn cnt_how_many_bags_contains(&self, bag: &String) -> usize{
-        // 2 + 4 + 8
         let mut cnt = 0;
         for (inner_bag, bag_cnt) in self.rules.get(bag).unwrap() {
             cnt += bag_cnt + bag_cnt * self.cnt_how_many_bags_contains(inner_bag);
         }
-        println!("{:?} {}", cnt, bag);
         cnt  
     }
 }
 
-pub struct Q8 {
+pub struct Q7 {
 
 }
 
-impl Q8 {
+impl Q7 {
     pub fn new() -> Self {
-        Q8 {}
+        Q7 {}
     }
 
     fn part1(&mut self) {
@@ -82,7 +80,7 @@ impl Q8 {
 
 }
 
-impl Runner for Q8 {
+impl Runner for Q7 {
     fn part1(&mut self) {
         self.part1()
     }
@@ -96,7 +94,7 @@ impl Runner for Q8 {
 #[cfg(test)]
 mod test{
     #[test]
-    fn Q8() {
+    fn Q7() {
         assert_eq!(1, 1);
     }
 }
