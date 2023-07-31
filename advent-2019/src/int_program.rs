@@ -1,3 +1,5 @@
+use std::io;
+
 use advent_2019::get_file;
 
 
@@ -11,7 +13,7 @@ pub struct Program {
 // 1219070632396864
 impl Program {
     pub fn new() -> Self {
-        let content = get_file("src/input/q15.txt").unwrap();
+        let content = get_file("src/input/q17.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
@@ -78,13 +80,19 @@ impl Program {
                     self.a_pointer += 4;
                 }
                 3 => {
+                    println!("reaching here");
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     self.integers[idx] = output;
+                    println!("output - {:?}", output);
                     self.a_pointer += 2;
                 }
                 4 => {
                     let input1 = self.param_mode_inputs(param1, 1);
+                    // // // println!("{:?}", input1);
+                    // let mut input1 = String::new();
+                    // io::stdin().read_line(&mut input1).expect("asdf");
                     // println!("{:?}", input1);
+                    // output = input1.trim().parse::<i64>().unwrap();
                     output = input1;
                     self.a_pointer += 2;
                     return Some(output)
