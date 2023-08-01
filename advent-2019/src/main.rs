@@ -20,6 +20,7 @@ use q15::Q15;
 use q16::Q16;
 use q17::Q17;
 use q18::Q18;
+use q19::Q19;
 use q20::Q20;
 use q22::Q22;
 
@@ -42,6 +43,7 @@ mod q15;
 mod q16;
 mod q17;
 mod q18;
+mod q19;
 mod q20;
 mod q22;
 
@@ -66,6 +68,7 @@ fn main() {
     let mut q16 = Q16::new();
     let mut q17 = Q17::new();
     let mut q18 = Q18::new();
+    let mut q19 = Q19::new();
     let mut q20 = Q20::new();
     let mut q22 = Q22::new();
 
@@ -89,6 +92,7 @@ fn main() {
         "16" => q16.run(),
         "17" => q17.run(),
         "18" => q18.run(),
+        "19" => q19.run(),
         "20" => q20.run(),
         "22" => q22.run(),
         _ => panic!("invalid instruction!"),
