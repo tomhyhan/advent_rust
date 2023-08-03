@@ -14,7 +14,7 @@ pub struct ProgramInputs {
 // 1219070632396864
 impl ProgramInputs {
     pub fn new(inputs:VecDeque<i64>) -> Self {
-        let content = get_file("src/input/q19.txt").unwrap();
+        let content = get_file("src/input/q21.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
@@ -82,6 +82,7 @@ impl ProgramInputs {
                     self.a_pointer += 4;
                 }
                 3 => {
+                    println!("reach here");
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     // self.integers[idx] = output;
                     self.integers[idx] = self.inputs.pop_front().unwrap();
@@ -233,6 +234,7 @@ impl Program {
                     self.a_pointer += 4;
                 }
                 3 => {
+                    println!("here");
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     self.integers[idx] = output;
                     self.a_pointer += 2;
