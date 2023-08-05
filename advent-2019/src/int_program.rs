@@ -319,7 +319,7 @@ pub struct ProgramASCII {
 // 1219070632396864
 impl ProgramASCII {
     pub fn new(str: String) -> Self {
-        let content = get_file("src/input/q21.txt").unwrap();
+        let content = get_file("src/input/q25.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
