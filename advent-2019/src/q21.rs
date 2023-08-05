@@ -2,6 +2,8 @@ use std::str::Chars;
 
 use advent_2019::{Runner, get_file};
 
+use crate::int_program::ProgramASCII;
+
 
 pub struct Q21 {
 
@@ -12,13 +14,28 @@ impl Q21 {
     pub fn new() -> Self {
         Q21 {}
     }
-
+    // #####..#.########
     fn part1(&mut self) {
-
-        let mut program = Program::new();
-        println!("{:?}", ('A' as u32) as i64);
-        while let Some(out) = program.run_program(('A' as u32) as i64) {
-            println!("{:?}", out);
+        // let instruction = "NOT D J\nWALK\n".to_string();
+        // let instruction = "OR C J\nOR A J\nOR B J\nWALK\n".to_string();
+        // #####.###########
+        // #####...#########
+        // #####..#.########
+        // #####.#..########
+        let instruction = "NOT B J\nNOT C T\nOR T J\nAND D J\nAND H J\nNOT A T\nOR T J\nRUN\n".to_string();
+        let mut program_acsii = ProgramASCII::new(instruction);
+        let mut msg = "".to_string();
+        while let Some(output) = program_acsii.run_program(0) {
+            let c = output as u8 as char;
+            if c == '\n' {
+                if !msg.is_empty() {
+                    println!("{:?}", msg);
+                    msg.clear();
+                }
+            } else {
+                msg.push(c);
+            }
+            // println!("{:?}", c)
         }
     }
 

@@ -319,7 +319,7 @@ pub struct ProgramASCII {
 // 1219070632396864
 impl ProgramASCII {
     pub fn new(str: String) -> Self {
-        let content = get_file("src/input/q25.txt").unwrap();
+        let content = get_file("src/input/q21.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
@@ -391,9 +391,9 @@ impl ProgramASCII {
                     self.a_pointer += 4;
                 }
                 3 => {
-                    if self.str_chars.is_empty() {
-                        return None
-                    }
+                    // if self.str_chars.is_empty() {
+                    //     return None
+                    // }
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     self.integers[idx] = (self.str_chars.pop_front().unwrap() as u32) as i64;
                     self.a_pointer += 2;
@@ -402,6 +402,7 @@ impl ProgramASCII {
                     let input1 = self.param_mode_inputs(param1, 1);
                     output = input1;
                     self.a_pointer += 2;
+                    println!("{output}");
                     return Some(output)
                 }
                 5 => {
