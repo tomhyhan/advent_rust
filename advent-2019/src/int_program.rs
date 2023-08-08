@@ -8,13 +8,14 @@ pub struct ProgramInputs {
     pub integers: Vec<i64>,
     a_pointer: usize,
     relative_base: usize,
-    inputs: VecDeque<i64>
+    pub inputs: VecDeque<i64>,
+    pub idle: usize
 }
 
 // 1219070632396864
 impl ProgramInputs {
     pub fn new(inputs:VecDeque<i64>) -> Self {
-        let content = get_file("src/input/q21.txt").unwrap();
+        let content = get_file("src/input/q23.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
@@ -25,7 +26,8 @@ impl ProgramInputs {
             integers,
             a_pointer,
             relative_base,
-            inputs
+            inputs,
+            idle: 0
         }
     }
 
@@ -82,20 +84,30 @@ impl ProgramInputs {
                     self.a_pointer += 4;
                 }
                 3 => {
-                    println!("reach here");
+                    // println!("reach here");
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     // self.integers[idx] = output;
-                    self.integers[idx] = self.inputs.pop_front().unwrap();
+                    self.integers[idx] = match self.inputs.pop_front(){
+                        Some(val) => val,
+                        None => {
+                            self.idle += 1; 
+                            -1
+                        }
+                    };
+                    // println!("{:?}", self.integers[idx]);
                     self.a_pointer += 2;
+                    if self.integers[idx] == -1 {
+                        return None
+                    }
                 }
                 4 => {
-                    let input1 = self.param_mode_inputs(param1, 1);
+                    let input = self.param_mode_inputs(param1, 1);
                     // // // println!("{:?}", input1);
                     // let mut input1 = String::new();
                     // io::stdin().read_line(&mut input1).expect("asdf");
                     // println!("{:?}", input1);
                     // output = input1.trim().parse::<i64>().unwrap();
-                    output = input1;
+                    output = input;
                     self.a_pointer += 2;
                     return Some(output)
                 }
@@ -167,7 +179,7 @@ pub struct Program {
 // 1219070632396864
 impl Program {
     pub fn new() -> Self {
-        let content = get_file("src/input/q19.txt").unwrap();
+        let content = get_file("src/input/q23.txt").unwrap();
         let mut integers = vec![0;100000];
         content.split(",").enumerate().for_each(|(idx, num )| {
             integers[idx] = num.parse().unwrap()
@@ -235,6 +247,7 @@ impl Program {
                 }
                 3 => {
                     println!("here");
+                    println!("{:?}", output);
                     let idx = self.get_output_idx(self.a_pointer+1, param1);
                     self.integers[idx] = output;
                     self.a_pointer += 2;
