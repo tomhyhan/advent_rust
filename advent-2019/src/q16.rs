@@ -10,14 +10,22 @@ use advent_2019::{Runner, get_file};
 struct Frequency{
     input: Vec<i32>,
     base_pattern: VecDeque<i32>,
+    offset:i32
 }
 
 impl Frequency {
     fn new() -> Self {
         let content = get_file("src/input/q16.txt").unwrap();
-        let input = content.chars().map(|c| c.to_digit(10).unwrap() as i32).collect();
+        let mut offset = "".to_string();
+        let input = content.chars().enumerate().map(|(idx, c)| {
+            if idx < 7 {
+                offset.push(c)
+            }
+            c.to_digit(10).unwrap() as i32
+        }).collect();
+        let offset = offset.parse::<i32>().unwrap();
         let base_pattern = VecDeque::from([0,1,0,-1]);
-        Self {input,base_pattern}
+        Self {input,base_pattern, offset}
     }
 // 123123123123
 // 234123412341
@@ -25,37 +33,45 @@ impl Frequency {
 // 122334411223344112233441
 // 123123123123123123123123123123123123123123123123123123123123
 // 11222333444111222333444111222333444111222333444111222333444
-    fn transmission(&mut self, phase: usize, input_repeated: usize) {
+    fn transmission(&mut self, phase: usize) {
         // input len = 3 base pattern len = 4 lcm = 12 / 3 = 4 
- 
         for _ in 0..phase {
             let mut next_input = vec![];    
+            let mut repeat = 1;
             for position in 0..self.input.len() {
-                let mut current_input = self.input.clone();
-                let repeat = position + 1;
+                let current_input = self.input.clone();
                 let pattern_len =  self.base_pattern.len();
                 // input should be changed here
-                let r = pattern_len * repeat / gcd((pattern_len * repeat) as i32, current_input.len() as i32) as usize ;
-                current_input = current_input.repeat(r);
-                
                 let mut i = 1;
                 let mut input = vec![];
                 for num in current_input.iter() {
-                    let base_num = (i / repeat) % pattern_len;
+                    let base_num = i / repeat % pattern_len;
                     input.push(num * self.base_pattern[base_num]);
                     i+= 1
                 }
-                let cycle = input_repeated / r;
-                let left = (input_repeated % r) as usize; 
-                let left_some = input[0..left].iter().cloned().sum::<i32>();
-                let input_sum: i32 = input.iter().sum::<i32>() * cycle as i32 + left_some;
-                next_input.push(input_sum.abs() % 10);
+                next_input.push(input.iter().sum::<i32>().abs() % 10);
+                repeat += 1
             }
-            println!("{:?}", next_input);
+            // println!("{:?}", next_input.iter().map(|num| char::from_digit(*num as u32,10).unwrap()).collect::<String>());
             self.input = next_input;
         }
-        
     }
+
+    fn heuristic_transmission(&mut self, phase: usize, input_repeated:usize) {
+        self.input = self.input.repeat(input_repeated);
+        let offset = self.offset as usize % self.input.len() ;
+        self.input = self.input[offset..].to_vec();
+        for i in 0..phase {
+            let mut sum = self.input.iter().sum::<i32>();
+            for j in 0..self.input.len() {
+                let current = sum;
+                sum -= self.input[j];
+                self.input[j] = current % 10
+            }
+        }
+        println!("{:?}", &self.input[0..8])
+    }
+
 }
 // 4810
 // 8, 6, 0, 0
@@ -85,11 +101,9 @@ impl Q16 {
 
     fn part2(&mut self) {
         let mut frequency = Frequency::new();
-        frequency.transmission(100, 10000);
-        println!("{:?}", frequency.input);
-        println!("{:?}", frequency.input[0..8].iter().cloned().map(|num| num.to_string()).collect::<String>().parse::<i32>().unwrap() % frequency.input.len() as i32);
-        println!("{:?}", gcd(3, 8));
-        
+        frequency.heuristic_transmission(100, 1000);
+        println!("{:?}", frequency.offset % frequency.input.len() as i32);
+        // println!("{:?}", frequency.input);
     }
 // .iter().cloned().map(|num| num.to_string()).collect::<String>()
 }
