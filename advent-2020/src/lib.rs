@@ -30,3 +30,7 @@ pub fn copy_file(file_name: &str) -> Result<(), Box<dyn Error>>{
     let new_content = content.replace("Sample", &file_name.to_uppercase());
     Ok(fs::write(format!("./src/{file_name}.rs"), new_content)?)
 }
+
+pub fn copy_txt(file_name: &str) -> Result<(), Box<dyn Error>>{
+    Ok(fs::write(format!("./src/input/{file_name}.txt"),"")?)
+}
