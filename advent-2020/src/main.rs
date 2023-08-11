@@ -3,11 +3,15 @@ use advent_2020::{copy_file, Runner, copy_txt};
 
 use q1::Q1;
 use q2::Q2;
+use q3::Q3;
+use q4::Q4;
 use q7::Q7;
 
 
 mod q1;
 mod q2;
+mod q3;
+mod q4;
 mod q7;
 
 fn main() {
@@ -15,6 +19,8 @@ fn main() {
 
     let mut q1 = Q1::new();
     let mut q2 = Q2::new();
+    let mut q3 = Q3::new();
+    let mut q4 = Q4::new();
     let mut q7 = Q7::new();
 
 
@@ -23,6 +29,8 @@ fn main() {
         "txt" => copy_txt(args[2].as_str()).unwrap(),
         "1" => q1.run(),
         "2" => q2.run(),
+        "3" => q3.run(),
+        "4" => q4.run(),
         "7" => q7.run(),
         _ => panic!("invalid instruction!"),
     }
