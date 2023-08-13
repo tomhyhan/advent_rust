@@ -6,6 +6,7 @@ use q2::Q2;
 use q3::Q3;
 use q4::Q4;
 use q5::Q5;
+use q6::Q6;
 use q7::Q7;
 
 
@@ -14,6 +15,7 @@ mod q2;
 mod q3;
 mod q4;
 mod q5;
+mod q6;
 mod q7;
 
 fn main() {
@@ -24,6 +26,7 @@ fn main() {
     let mut q3 = Q3::new();
     let mut q4 = Q4::new();
     let mut q5 = Q5::new();
+    let mut q6 = Q6::new();
     let mut q7 = Q7::new();
 
 
@@ -35,6 +38,7 @@ fn main() {
         "3" => q3.run(),
         "4" => q4.run(),
         "5" => q5.run(),
+        "6" => q6.run(),
         "7" => q7.run(),
         _ => panic!("invalid instruction!"),
     }
