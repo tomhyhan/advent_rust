@@ -10,6 +10,7 @@ use q6::Q6;
 use q7::Q7;
 use q8::Q8;
 use q9::Q9;
+use q10::Q10;
 use q15::Q15;
 use q16::Q16;
 use q17::Q17;
@@ -25,6 +26,7 @@ mod q6;
 mod q7;
 mod q8;
 mod q9;
+mod q10;
 mod q15;
 mod q16;
 mod q17;
@@ -42,6 +44,7 @@ fn main() {
     let mut q7 = Q7::new();
     let mut q8 = Q8::new();
     let mut q9 = Q9::new();
+    let mut q10 = Q10::new();
     let mut q15 = Q15::new();
     let mut q16 = Q16::new();
     let mut q17 = Q17::new();
@@ -60,6 +63,7 @@ fn main() {
         "7" => q7.run(),
         "8" => q8.run(),
         "9" => q9.run(),
+        "10" => q10.run(),
         "15" => q15.run(),
         "16" => q16.run(),
         "17" => q17.run(),
