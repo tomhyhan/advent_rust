@@ -37,17 +37,12 @@ impl PortSystem {
                         lazy_static! {
                             static ref RE: Regex = Regex::new(r"\d+").unwrap(); 
                         }
-                        let value = value.parse::<i64>().unwrap();
+                        let value = value.parse::<u64>().unwrap();
                         let address = RE.find(key).unwrap().as_str().parse::<u64>().unwrap();
-                        // 42
                         let mut addresses = vec![];
-                        for bit in cmask.chars().rev() {
-                            match bit {
-                                'X' => {}
-                                '0' => {}
-                                '1' => {}
-                                _ => panic!("unknown bit pattern")
-                            }
+                        self.change_address(address,cmask.chars().collect(), &mut addresses, 0, 0 );
+                        for address in addresses.iter() {
+                            self.memory.insert(*address, value);
                         }
                     } else {
                         panic!("mask does not exist")
@@ -55,8 +50,29 @@ impl PortSystem {
                 }
             }
         }
+        println!("sum - {:?}", self.memory.values().sum::<u64>())
     }
     
+    fn change_address(&self, address: u64, mask: Vec<char>, addresses: &mut Vec<u64>, idx: usize, addr_so_far: u64) {
+        if let Some(c_mask) = mask.last() {
+            match c_mask {
+                '0' => {
+                    self.change_address(address, mask[..mask.len()-1].to_vec(), addresses, idx + 1, addr_so_far + (address & (1 << idx)))
+                }
+                '1' => {
+                    self.change_address(address, mask[..mask.len()-1].to_vec(), addresses, idx + 1, addr_so_far + (1 << idx))
+                }
+                'X' => {
+                    self.change_address(address, mask[..mask.len()-1].to_vec(), addresses, idx + 1, addr_so_far + (0 << idx));
+                    self.change_address(address, mask[..mask.len()-1].to_vec(), addresses, idx + 1, addr_so_far + (1 << idx));
+                }
+                _ => unreachable!()
+            }
+        } else {
+            addresses.push(addr_so_far)
+        }
+    }
+
     fn sum_masked_values(&mut self) {
         let mut mask: Option<String> = None;
         for ins in self.instructions.iter() {
@@ -101,7 +117,8 @@ impl Q14 {
     }
 
     fn part2(&mut self) {
-        
+        let mut sys = PortSystem::new();
+        sys.decode_address(); 
     }
 
 }
