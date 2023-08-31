@@ -91,8 +91,53 @@ impl Q19 {
 
     fn part2(&mut self) {
         let satellite = Satellite::new();
-        println!("{:?}", satellite.get_messages("42".to_string()));
-        println!("{:?}", satellite.get_messages("31".to_string()));
+        let front_comb = satellite.get_messages("42".to_string());
+        let back_comb = satellite.get_messages("31".to_string());
+        println!("{:?}", front_comb);
+        println!("{:?}", back_comb);
+        // println!("{:?}", "bababbba".len());
+        // let valid_vec: Vec<String>= satellite.valids.into_iter().collect();
+        let mut valids = 0;
+        for valid in satellite.valids.iter() {
+            let to_vec = valid.chars().collect::<Vec<char>>();
+            let valid_test: Vec<String> = to_vec.chunks(8).map(|v| v.iter().collect()).collect();
+            // println!("{:?}", valid_test);
+            if !front_comb.contains(&valid_test[0]) {
+                continue
+            }
+            if !back_comb.contains(valid_test.last().unwrap()) {
+                continue
+            }
+            let mid_len = valid_test[1..valid_test.len() - 1].len();
+            let mut left = 0;
+            for i in 1..valid_test.len()-1 {
+                if !front_comb.contains(&valid_test[i]) {
+                    break
+                }
+                left += 1
+            }
+            if left == 0 {
+                continue
+            }
+            let mut right: i32 = 0;
+            for i in (1..valid_test.len() - 1).rev() {
+                if !back_comb.contains(&valid_test[i]) {
+                    break
+                }
+                right += 1
+            }
+            // println!("{left} {right}");
+            if mid_len != (left + right) as usize {
+                continue;
+            };
+            if (left >= 1 && right == 0) || (left - right == 1) || (
+                left - right * 2 == 1) {
+                    valids += 1;
+            }
+            // println!("{:?}", valid);
+            // valids += 1;
+        }
+        println!("valids - {:?}", valids);
     }
 
 }

@@ -20,6 +20,7 @@ use q16::Q16;
 use q17::Q17;
 use q18::Q18;
 use q19::Q19;
+use q20::Q20;
 
 
 mod q1;
@@ -41,6 +42,7 @@ mod q16;
 mod q17;
 mod q18;
 mod q19;
+mod q20;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -64,6 +66,7 @@ fn main() {
     let mut q17 = Q17::new();
     let mut q18 = Q18::new();
     let mut q19 = Q19::new();
+    let mut q20 = Q20::new();
 
 
     match args[1].as_str() {
@@ -88,6 +91,7 @@ fn main() {
         "17" => q17.run(),
         "18" => q18.run(),
         "19" => q19.run(),
+        "20" => q20.run(),
         _ => panic!("invalid instruction!"),
     }
 }
