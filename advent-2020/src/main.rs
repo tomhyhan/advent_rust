@@ -24,6 +24,8 @@ use q20::Q20;
 use q21::Q21;
 use q22::Q22;
 use q23::Q23;
+use q24::Q24;
+use q25::Q25;
 
 
 mod q1;
@@ -49,6 +51,8 @@ mod q20;
 mod q21;
 mod q22;
 mod q23;
+mod q24;
+mod q25;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -76,6 +80,8 @@ fn main() {
     let mut q21 = Q21::new();
     let mut q22 = Q22::new();
     let mut q23 = Q23::new();
+    let mut q24 = Q24::new();
+    let mut q25 = Q25::new();
 
 
     match args[1].as_str() {
@@ -104,6 +110,8 @@ fn main() {
         "21" => q21.run(),
         "22" => q22.run(),
         "23" => q23.run(),
+        "24" => q24.run(),
+        "25" => q25.run(),
         _ => panic!("invalid instruction!"),
     }
 }
