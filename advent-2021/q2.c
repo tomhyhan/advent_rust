@@ -7,7 +7,7 @@ int main(void) {
 
     int num, result;
     char line[10], ins[20];
-    int coord[] = {0,0};
+    int coord[] = {0,0,0};
 
     err = fopen_s(&file, "./inputs/q2.txt", "r");
 
@@ -23,12 +23,13 @@ int main(void) {
             {
             case 'f':
                 coord[0] += num;
+                coord[1] += coord[2] * num;
                 break;
             case 'd':
-                coord[1] += num;
+                coord[2] += num;
                 break;
             case 'u':
-                coord[1] -= num;
+                coord[2] -= num;
                 break;
             default:
                 return 1;
