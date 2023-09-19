@@ -35,7 +35,7 @@ int push(Vector *vector, int value) {
         }
     }
 
-    vector->array[vector->size] = value;
+    vector->array[vector->size] = (value);
     vector->size++;
     return 1;
 }
@@ -63,6 +63,12 @@ int capacity(Vector *vector) {
     return vector->capacity;
 }
 
+void print_vector(Vector *vector) {
+    size_t i;
+    for (i=0;i<vector->size;i++) {
+        printf("%d\n", vector->array[i]);
+    }
+}
 
 void free_vector(Vector *vector) {
     free(vector->array);

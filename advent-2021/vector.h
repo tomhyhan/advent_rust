@@ -15,5 +15,6 @@ int pop(Vector *vector);
 int size(Vector *vector);
 int capacity(Vector *vector);
 void free_vector(Vector *vector);
+void print_vector(Vector *vector);
 
 #endif
