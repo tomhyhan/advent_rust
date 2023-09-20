@@ -49,8 +49,8 @@ int pop(Vector *vector) {
         return -1;
     }
 
-    value = vector->array[vector->size];
     vector->size--;
+    value = vector->array[vector->size];
     return value;
 }
 
