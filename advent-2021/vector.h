@@ -4,7 +4,7 @@
 
 typedef struct {
     int *array;
-    unsigned int size;
+unsigned int size;
     unsigned int capacity;
 } Vector;
 

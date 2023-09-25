@@ -1,20 +1,37 @@
-#include <stdio.h>
-#include "ptr_vector.h"
+#include "lib.h"
 
-void prinf_vector(PointVector *vector)
-{
-    printf("%d\n", *(int *)vector->array[0]);
-    *(int *)vector->array[0] = 5;
-    printf("%d\n", *(int *)vector->array[0]);
-}
+#define C 1000
 
-int main(void)
+static void simulate(Vector *vector, int days);
+
+static int part1(FILE *file)
 {
-    PointVector *vector = init_ptr_vector(10);
-    int value = 1;
-    push(vector, &value);
-    printf("%d\n", *(int *)vector->array[0]);
-    value = 2;
-    prinf_vector(vector);
+    Vector *vector = init_vector(C);
+    char line[C];
+
+    fgets(line, sizeof(line), file);
+    split_string(vector, ",", line);
+    simulate(vector, 18);
+    free_vector(vector);
     return 1;
 }
+
+static void simulate(Vector *vector, int days) {
+    unsigned i;
+    while (days >0) {
+        unsigned int current_size = vector->size, zeros = 0;
+        for (i=0; i < current_size; i++) {
+            int* fish = &vector->array[i];
+            *fish -= 1;
+            if (*fish < 0) {
+                *fish = 6;
+                push(vector, 8);
+            }
+        }
+        days--;
+    }
+    printf("%d\n", vector->size);
+}
+
+AOC_MAIN()
+

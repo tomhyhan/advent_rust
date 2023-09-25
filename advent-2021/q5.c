@@ -15,6 +15,7 @@ int draw_lines(PointVector *ptr_vector, int max_x, int max_y);
 void swap(int *p1, int *p2);
 void draw(struct Coord *ptr, int** surface);
 int **create_surface(int max_x, int max_y);
+void mark_surface(int** surface, int x1, int y1, int x2, int y2);
 
 int main(void) {
     FILE *file = read_file_data("./inputs/q5.txt");
@@ -24,13 +25,13 @@ int main(void) {
 
     while (fgets(line, sizeof(line), file) != NULL) {
         if (sscanf_s(line, "%d,%d -> %d,%d", &x1, &y1, &x2, &y2) == 4) {
+            
             struct Coord *coord = (struct Coord *)malloc(sizeof(struct Coord));
             coord -> x1 = x1;
             coord -> y1 = y1;
             coord -> x2 = x2;
             coord -> y2 = y2;
             push(ptr_vector, coord);
-            /* printf("%d %d %d %d\n", x1,y1,x2,y2); */
             max_x = find_max(max_x, x1, x2);
             max_y = find_max(max_y, y1, y2);
         }
@@ -63,7 +64,6 @@ int draw_lines(PointVector *ptr_vector, int max_x, int max_y) {
     int **surface = create_surface(max_x, max_y);
     int  i,j,overlaps = 0;
     struct Coord *ptr;
-    printf("%d %d\n", max_x, max_y);
 
     for (i=0; i< ptr_vector->size; i++) {
         ptr = ptr_vector->array[i];
@@ -84,14 +84,13 @@ int draw_lines(PointVector *ptr_vector, int max_x, int max_y) {
         free(surface[i]); 
     }
     free(surface);
+    return 1;
 }
 
+
 void draw(struct Coord *ptr, int** surface) {
-    int x1=ptr->x1;
-    int x2=ptr->x2;
-    int y1=ptr->y1; 
-    int y2=ptr->y2;
-    
+    int x1=ptr->x1, x2=ptr->x2, y1=ptr->y1, y2=ptr->y2;
+
     if (x1 == x2) {
         if (y1 > y2) {
             swap(&y1,&y2);
@@ -106,6 +105,38 @@ void draw(struct Coord *ptr, int** surface) {
         while (x1 <= x2) {
             surface[y1][x1++] += 1;
         }
+    } else {
+        mark_surface(surface, x1, y1, x2, y2);
+    }
+}
+
+void mark_surface(int** surface, int x1, int y1, int x2, int y2) {
+    int y_larger = y1 < y2;
+    int x_larger = x1 < x2;
+    switch (y_larger*10 + x_larger) { 
+        case 11:            
+            while (x1 <= x2) {
+                surface[y1++][x1++] += 1;
+            }
+            break;
+        case 10:            
+            while (x1 >= x2) {
+                surface[y1++][x1--] += 1;
+            }
+            break;
+        case 0:            
+            while (x1 >= x2) {
+                surface[y1--][x1--] += 1;
+            }
+            break;        
+        case 1:            
+            while (x1 <= x2) {
+                surface[y1--][x1++] += 1;
+            }
+            break;        
+        default:
+            printf("invalid condition");
+            exit(1);
     }
 }
 

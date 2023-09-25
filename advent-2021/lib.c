@@ -1,6 +1,5 @@
 #include "lib.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "vector.c"
 
 FILE *read_file_data(const char *file_name) {
     FILE *file;
@@ -15,3 +14,18 @@ FILE *read_file_data(const char *file_name) {
     
     return file;
 }
+
+int split_string(Vector *vector, const char delimeter[],char line[]) {
+    char *token = NULL, *next_token = NULL;
+    int num;
+    token = strtok_s(line, delimeter, &next_token);
+    while (token != NULL) {
+        num = atoi(token);
+        push(vector, num);
+        token = strtok_s(NULL, delimeter, &next_token);
+    }
+    return 1;
+}
+
+
+
