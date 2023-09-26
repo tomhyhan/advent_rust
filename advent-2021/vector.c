@@ -5,7 +5,7 @@
 Vector *init_vector(int init_capacity) {
     Vector *vector = (Vector *)malloc(sizeof(Vector));
 
-    vector->array = (int *)malloc(sizeof(int) * init_capacity);
+    vector->array = (int64_t *)malloc(sizeof(int64_t) * init_capacity);
     if (vector->array == NULL) {
         free(vector);
         return NULL;
@@ -17,7 +17,7 @@ Vector *init_vector(int init_capacity) {
     return vector;
 }
 
-int get(Vector *vector, unsigned int idx) {
+int get(Vector *vector, size_t idx) {
     if (idx < 0 || idx >= vector->size) {
         printf("index error");
         return -1;
@@ -29,7 +29,7 @@ int get(Vector *vector, unsigned int idx) {
 int push(Vector *vector, int value) {
     if (vector->size == vector->capacity) {
         vector->capacity *= 2;
-        vector->array = (int *)realloc(vector->array, sizeof(int) * vector->capacity);
+        vector->array = (int64_t *)realloc(vector->array, sizeof(int64_t) * vector->capacity);
         if (vector->array == NULL) {
             return -1;
         }
@@ -66,7 +66,7 @@ int capacity(Vector *vector) {
 void print_vector(Vector *vector) {
     size_t i;
     for (i=0;i<vector->size;i++) {
-        printf("%d\n", vector->array[i]);
+        printf("%llu\n", vector->array[i]);
     }
 }
 
