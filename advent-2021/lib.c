@@ -1,5 +1,6 @@
 #include "lib.h"
 #include "vector.c"
+#include "ptr_vector.c"
 
 FILE *read_file_data(const char *file_name) {
     FILE *file;

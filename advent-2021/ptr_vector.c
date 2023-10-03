@@ -18,7 +18,7 @@ PointVector *init_ptr_vector(int init_capacity) {
     return point_vector;
 }
 
-int push(PointVector *ptr_vector, void* ptr) {
+int push_pv(PointVector *ptr_vector, void* ptr) {
     if (ptr_vector->size == ptr_vector->capacity) {
         ptr_vector->capacity *= 2;
         ptr_vector->array = (void **)realloc(ptr_vector->array, sizeof(void *) * ptr_vector->capacity);
@@ -32,7 +32,7 @@ int push(PointVector *ptr_vector, void* ptr) {
     return 1;
 }
 
-void *pop(PointVector *ptr_vector) {
+void *pop_pv(PointVector *ptr_vector) {
     void* current;
 
     if (ptr_vector->size ==0) {
@@ -44,11 +44,11 @@ void *pop(PointVector *ptr_vector) {
     return current;
 }
 
-unsigned int size(PointVector *ptr_vector) {
+unsigned int size_pv(PointVector *ptr_vector) {
     return ptr_vector->size;
 }
 
-unsigned int capacity(PointVector *ptr_vector) {
+unsigned int capacity_pv(PointVector *ptr_vector) {
     return ptr_vector->capacity;
 }
 

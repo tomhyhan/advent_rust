@@ -8,25 +8,26 @@
 #include <inttypes.h>
 
 #include "vector.h"
+#include "ptr_vector.h"
 
 FILE *read_file_data(const char *file_name);
 int split_string(Vector *vector, const char delimeter[],char line[]);
 
 #define AOC_MAIN(filename)                                    \
-  int main(void) {                                           \
-    FILE *file = read_file_data(filename);                                 \
-    part1(file);                                                                \
-    part2(file);                                                                \
-    fclose(file);                                                               \
-    return EXIT_SUCCESS;                                                       \
+  int main(void) {                                            \
+    FILE *file = read_file_data(filename);                    \
+    part1(file);                                              \
+    part2(file);                                              \
+    fclose(file);                                             \
+    return EXIT_SUCCESS;                                      \
 }
 
-#define AOC_MAIN_ONE(filename)                                    \
-  int main(void) {                                           \
-    FILE *file = read_file_data(filename);                                 \
-    solution(file);                                                                \
-    fclose(file);                                                               \
-    return EXIT_SUCCESS;                                                       \
+#define AOC_MAIN_ONE(filename)                                \
+  int main(void) {                                            \
+    FILE *file = read_file_data(filename);                    \
+    solution(file);                                           \
+    fclose(file);                                             \
+    return EXIT_SUCCESS;                                      \
 }
 
 #endif
@@ -34,4 +35,7 @@ int split_string(Vector *vector, const char delimeter[],char line[]);
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define TRUE 1
+#define FALSE 0
+#define ARRAY_LENGTH(array) (sizeof(array) / sizeof(array[0]))
 

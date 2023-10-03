@@ -8,10 +8,8 @@ typedef struct {
 } PointVector;
 
 PointVector *init_ptr_vector(int init_capacity);
-int push(PointVector *ptr_vector, void* ptr);
-void *pop(PointVector *ptr_vector);
-unsigned int size(PointVector *ptr_vector);
-unsigned int capacity(PointVector *ptr_vector);
+int push_pv(PointVector *ptr_vector, void* ptr);
+void *pop_pv(PointVector *ptr_vector);
 void free_ptr_vector(PointVector *ptr_vector);
 
 #endif
