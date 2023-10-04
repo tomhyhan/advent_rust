@@ -1,6 +1,7 @@
 #include "lib.h"
 #include "vector.c"
 #include "ptr_vector.c"
+#include "hashmap.c"
 
 FILE *read_file_data(const char *file_name) {
     FILE *file;

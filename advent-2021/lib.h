@@ -9,6 +9,7 @@
 
 #include "vector.h"
 #include "ptr_vector.h"
+#include "hashmap.h"
 
 FILE *read_file_data(const char *file_name);
 int split_string(Vector *vector, const char delimeter[],char line[]);
