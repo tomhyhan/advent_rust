@@ -26,7 +26,7 @@ int get(Vector *vector, size_t idx) {
     return vector->array[idx];
 }
 
-int push(Vector *vector, int value) {
+int push(Vector *vector, size_t value) {
     if (vector->size == vector->capacity) {
         vector->capacity *= 2;
         vector->array = (int64_t *)realloc(vector->array, sizeof(int64_t) * vector->capacity);

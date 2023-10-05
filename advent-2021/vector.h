@@ -11,7 +11,7 @@ typedef struct {
 
 Vector *init_vector(int init_capacity);
 int get(Vector *vector, size_t idx);
-int push(Vector *vector, int value);
+int push(Vector *vector, size_t value);
 int pop(Vector *vector);
 int size(Vector *vector);
 int capacity(Vector *vector);
