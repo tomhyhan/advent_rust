@@ -26,11 +26,11 @@ int hash(char *key) {
     return hash;
 }
 
-void insert(HashMap *hashmap, char *key, char *value) {
+void insert(HashMap* hashmap, char* key, void* value) {
     size_t hashed_key = hash(key);
     KeyValue *new_kv = (KeyValue*)malloc(sizeof(KeyValue)); KeyValue **current;
     new_kv->key = _strdup(key);
-    new_kv->value = _strdup(value);
+    new_kv->value = value;
     new_kv->next = NULL;
 
     current = &(hashmap->map[hashed_key]);
@@ -39,7 +39,7 @@ void insert(HashMap *hashmap, char *key, char *value) {
     } else {
         while (*current != NULL) {
         if (strcmp((*current)->key, key) == 0) {
-            (*current)->value = _strdup(value);  
+            (*current)->value = value;  
             free(new_kv->key);
             free(new_kv->value);
             free(new_kv);
@@ -51,7 +51,7 @@ void insert(HashMap *hashmap, char *key, char *value) {
     }
 }
 
-char* find_val(HashMap *hashmap, char *key) {
+void* find_val(HashMap *hashmap, char *key) {
     size_t hashed_key = hash(key);
     KeyValue *current = hashmap->map[hashed_key];
     while (current != NULL) {
