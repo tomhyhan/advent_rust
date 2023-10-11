@@ -33,6 +33,7 @@ int split_string(Vector *vector, const char delimeter[],char line[]);
 
 #endif
 
+typedef int8_t bool; 
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
