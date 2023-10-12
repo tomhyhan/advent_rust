@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <assert.h>
 
 #include "vector.h"
 #include "ptr_vector.h"
