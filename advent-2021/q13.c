@@ -93,14 +93,16 @@ void solution(FILE *file) {
     }
     for (i=0; i < 7; i++) {
         for (j=0; j < 50; j++) {
-            if (paper[i][j] == TRUE) {
-                printf("#");
-            }else {
-                printf(".");
-            }
+            printf(paper[i][j] ? "#": ".");
         }
         printf("\n");
     }
+
+    free_ptr_vector(points);
+    for (i=0; i < max_row; i++) {
+        free(paper[i]);
+    }
+    free(paper);
 }
 
 

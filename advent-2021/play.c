@@ -1,12 +1,17 @@
-#include <stdio.h>
-__attribute__((constructor(102))) static void init1(){
-printf("%s\n", __FUNCTION__);
-}
-__attribute__((constructor(101))) static void init2(){
-printf("%s\n", __FUNCTION__);
-}
-int main(int argc, char *argv[])
-{
-printf("hello world!\n");
-return 0;
+#include "lib.h"
+#define PAPER_SIZE 1000
+
+typedef struct {
+  bool dots[PAPER_SIZE][PAPER_SIZE];
+  uint16_t width, height;
+  char* ch;
+} paper_t;
+
+int main(void) {
+    paper_t *paper = (paper_t*)malloc(sizeof(paper_t));
+    paper->width = PAPER_SIZE;
+    paper->ch = "aasdf";
+    printf("%d\n", paper -> width);
+    printf("%s\n", paper -> ch);
+    return 0;
 }
