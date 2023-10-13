@@ -1,17 +1,20 @@
-#include "lib.h"
-#define PAPER_SIZE 1000
+#include <stdio.h>
 
 typedef struct {
-  bool dots[PAPER_SIZE][PAPER_SIZE];
-  uint16_t width, height;
-  char* ch;
-} paper_t;
+    int x;
+    char* y;
+} test ;
+
+test parse_polymer(void) {
+    test t = {0};
+    t.x = 7;
+    t.y = "asdf";
+    return t;
+}
 
 int main(void) {
-    paper_t *paper = (paper_t*)malloc(sizeof(paper_t));
-    paper->width = PAPER_SIZE;
-    paper->ch = "aasdf";
-    printf("%d\n", paper -> width);
-    printf("%s\n", paper -> ch);
+    test t = parse_polymer();
+    printf("%s", t.y);
+    printf("%d", t.x);
     return 0;
 }
