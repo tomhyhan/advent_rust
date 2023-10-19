@@ -13,7 +13,6 @@ FILE *read_file_data(const char *file_name) {
         printf("Failed to open the file. Error code: %d\n", err);
         exit(EXIT_FAILURE);
     }
-    
     return file;
 }
 
