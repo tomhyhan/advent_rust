@@ -1,20 +1,11 @@
 #include <stdio.h>
 
-typedef struct {
-    int x;
-    char* y;
-} test ;
-
-test parse_polymer(void) {
-    test t = {0};
-    t.x = 7;
-    t.y = "asdf";
-    return t;
-}
 
 int main(void) {
-    test t = parse_polymer();
-    printf("%s", t.y);
-    printf("%d", t.x);
+    char test[2][2] = {{'1','2'},{'3','4'}};
+    char* t[2];
+    t[0] = test[0];
+    t[1] = test[1];
+    printf("%s\n", t[0]);
     return 0;
 }
