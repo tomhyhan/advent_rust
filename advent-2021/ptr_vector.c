@@ -1,7 +1,7 @@
 #include "ptr_vector.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 PointVector *init_ptr_vector(int init_capacity) {
     PointVector *point_vector = (PointVector *)malloc(sizeof(PointVector));
@@ -42,6 +42,16 @@ void *pop_pv(PointVector *ptr_vector) {
     ptr_vector->size--;
     current = ptr_vector->array[ptr_vector->size];
     return current;
+}
+
+void remove_pv(PointVector* ptr_vector, size_t i) {
+    memmove(ptr_vector->array + i, ptr_vector->array + i + 1, (ptr_vector->size - i - 1) * sizeof(ptr_vector->array[0]));
+    ptr_vector->size--;
+}
+
+void insert_pv(PointVector* ptr_vector, size_t i) {
+    memmove(ptr_vector->array + i + 1, ptr_vector->array + i, (ptr_vector->size - i) * sizeof(ptr_vector->array[0]));
+    ptr_vector->size++;
 }
 
 unsigned int size_pv(PointVector *ptr_vector) {

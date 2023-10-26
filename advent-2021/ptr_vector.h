@@ -11,5 +11,7 @@ PointVector *init_ptr_vector(int init_capacity);
 int push_pv(PointVector *ptr_vector, void* ptr);
 void *pop_pv(PointVector *ptr_vector);
 void free_ptr_vector(PointVector *ptr_vector);
+void remove_pv(PointVector* ptr_vector, size_t i);
+void insert_pv(PointVector* ptr_vector, size_t i);
 
 #endif
