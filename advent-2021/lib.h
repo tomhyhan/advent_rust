@@ -8,6 +8,7 @@
 #include <inttypes.h>
 #include <assert.h>
 #include <math.h>
+#include <assert.h>
 
 #include "vector.h"
 #include "ptr_vector.h"
