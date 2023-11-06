@@ -1,6 +1,6 @@
 #include "lib.h"
 
-#define MARGIN (50)
+#define MARGIN (100)
 #define IMAGE (100)
 #define IMAGE_SIZE (IMAGE + MARGIN * 2)
 #define DECODE_SIZE (512)
@@ -130,7 +130,7 @@ int64_t lit_pixels(char image[][IMAGE_SIZE]) {
 
 void solution(FILE *file)
 {
-    char decode[512] = {0};
+    char decode[DECODE_SIZE] = {0};
     int64_t pixels;
     char image[IMAGE_SIZE][IMAGE_SIZE];
     init_image(image);

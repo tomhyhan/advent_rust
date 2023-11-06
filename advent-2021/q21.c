@@ -7,6 +7,11 @@ typedef struct {
 } player_t;
 
 typedef struct {
+    int64_t universe1;
+    int64_t universe2;
+} universes_t;
+
+typedef struct {
     player_t players[5];
     bool turn;
 } players_t;
@@ -35,41 +40,71 @@ void play(player_t* player) {
     player->rolled += 3;
 }
 
-void play_universe(player_t player1, player_t player2) {
-    PointVector* stack = init_ptr_vector(100);
-    int64_t p1_universe = 0;
-    int64_t p2_universe = 0;
-    players_t game = {0};
-    game.players[0] = player1;
-    game.players[1] = player2;
-    game.turn = TRUE;
+void roll_universe_dice(player_t* player, size_t roll) {
+    int32_t next_pos = (player->pos + roll) % 10;
+    
+    player->pos = next_pos == 0 ? 10 : next_pos;
+    player->value += player->pos;
+    player->rolled += 3;
+}
 
-    push_pv(stack, &game);
-    while (stack->size != 0) {
-        players_t* cgame = pop_pv(stack);
-        printf("pos: %d\n", cgame->players[0].pos);
-        if (cgame->turn == TRUE) {
-            players_t* cp = malloc(sizeof(players_t));
-            printf("start\n");
-            memcpy(cp, cgame, sizeof(players_t));
-            printf(":asdf\n");
-            printf("cp: %d\n", cp->players[0].pos);
-            cp->turn = FALSE;
-            cp->players[0].pos = 9;
-            push_pv(stack, cp);
-        }
+universes_t play_universe(players_t* game, int32_t memo[]) {
+    universes_t unis = {0};
+    // size_t key = game->players[0].value
+    if (game->players[0].value >= 21) {
+        universes_t unis = {0};
+        unis.universe1++;
+        return unis;
+    }
+    
+    if (game->players[1].value >= 21) {
+        universes_t unis = {0};
+        unis.universe2++;
+        return unis;
     }
 
-    // player_t cp = {0}; 
-    // memcpy(&cp, &player1, sizeof(player_t));
-    // printf("cp: %d\n", cp.value);
-    free_ptr_vector(stack);
+    
+    if (game->turn) {
+        size_t roll;
+        for (roll=1; roll <= 3; roll++) {
+            players_t* cp = malloc(sizeof(players_t));
+            universes_t uni1;
+            memcpy(cp, game, sizeof(players_t));
+            cp->turn = FALSE;
+            roll_universe_dice(&cp->players[0], roll);
+            uni1 = play_universe(cp, memo);
+            unis.universe1 += uni1.universe1;
+            unis.universe2 += uni1.universe2;
+            free(cp);
+        }
+    } else if (!game->turn)  {
+        size_t roll;
+        for (roll=1; roll <= 3; roll++) {
+            players_t* cp = malloc(sizeof(players_t));
+            universes_t uni2;
+            memcpy(cp, game, sizeof(players_t));
+            cp->turn = TRUE;
+            roll_universe_dice(&cp->players[1], roll);
+            play_universe(cp, memo);
+            uni2 = play_universe(cp, memo);
+            unis.universe1 += uni2.universe1;
+            unis.universe2 += uni2.universe2;
+            free(cp);
+        }
+    }
+    // memo
+    
+    return unis;
 }
 
 void solution(FILE* file) {    
     player_t player1 = {0};
     player_t player2 = {0};
     bool play1_turn = TRUE;
+    players_t *game;
+    int64_t universe = 0;
+    int32_t memo[3600] = {0};
+    universes_t unis;
 
     parse_input(file, &player1, &player2);    
 
@@ -84,8 +119,13 @@ void solution(FILE* file) {
     // }
     // printf("%d\n", player1.value);
     // printf("%d\n", player1.value * (player1.rolled + player2.rolled));
-
-    play_universe(player1, player2);
+    game = malloc(sizeof(players_t));
+    game->players[0] = player1;
+    game->players[1] = player2;
+    game->turn = TRUE;
+    unis = play_universe(game, memo);
+    free(game);
+    printf("universes: %lld\n", unis.universe1);
 }
 
 AOC_MAIN_ONE("./inputs/q21.txt")
