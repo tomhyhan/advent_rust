@@ -37,6 +37,9 @@ static game_results_t *quantum_game_results(uint32_t initial_pos) {
                     // printf("p %d %d %d %d\n", player_a, player_b, score, roll);
                     // printf("p %d %d \n", q, v);
                     // printf("score %d\n", ROLL_PROBABILITY[roll] * table[player_a - 1][player_b][score]);
+                    // q = 4 v = 4 a = 1
+                    // 0 1 0
+                    // when roll the dice when a 0 b 5 s
                     table[player_a][q][v] += ROLL_PROBABILITY[roll] * table[player_a - 1][player_b][score];
                     // printf("score %d\n", table[player_a][q][v]);
                 }
@@ -69,21 +72,22 @@ void solution(FILE* file) {
     game_results_t *p2_results;
     uint64_t p1_score = 0, p2_score = 0;
     uint8_t i;
+    
     parse_input(file, &player1, &player2);    
 
-   p1_results = quantum_game_results(player1.pos);
-   p2_results = quantum_game_results(player2.pos);
+    p1_results = quantum_game_results(player1.pos);
+    p2_results = quantum_game_results(player2.pos);
 
   
     printf("%lld\n", p1_results->wins[3]);
     printf("%lld\n", p2_results->loss[2]);
-  for (i = 1; i < MAX_GAMES; i++) {
-    p1_score += p1_results->wins[i] * p2_results->loss[i - 1];
-    p2_score += p2_results->wins[i - 1] * p1_results->loss[i - 1];
-  }
+    for (i = 1; i < MAX_GAMES; i++) {
+        p1_score += p1_results->wins[i] * p2_results->loss[i - 1];
+        p2_score += p2_results->wins[i - 1] * p1_results->loss[i - 1];
+    }
 
-  free(p1_results);
-  free(p2_results);
+    free(p1_results);
+    free(p2_results);
 
     printf("%lld %lld", p1_score, p2_score);
 }
