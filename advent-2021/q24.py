@@ -11,17 +11,36 @@ def solution(filename):
             instructions = []
         else:
             instructions.append(line)
-    # check_model(alu, "99999999999999")
-    reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0}
-    check_bit(9, alu[0], reg)
-    check_bit(8, alu[1], reg)
-    check_bit(8, alu[2], reg)
-    check_bit(1, alu[3], reg)
-    check_bit(8, alu[4], reg)
-    check_bit(8, alu[5], reg)
-    # check_bit(9, alu[2])
-    # check_bit(9, alu[3])
-    # check_bit(9, alu[4])
+
+    for i in range(1,10):
+        reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0 }
+        check_bit(i, alu[0],reg)
+    test(alu[1])
+    # du = defaultdict(int)
+    # for ins in alu:
+    #     for inss in ins:
+    #         du[inss] += 1
+    
+    # for k, v in du.items():
+    #     if v < 14:
+    #         print(k, v)
+    # print(du)
+    
+# {'w': 9, 'x': 0, 'y': 0, 'z': 18}
+def test(instructions):
+    for i in range(0, 23):
+        for j in range(1,10):
+            reg = {'w': 0, 'x': 0, 'y': 0, 'z': i}
+            check_bit(j, instructions, reg)
+                
+def check_bit(bit, instructions, reg):
+    # reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0}
+    for instruction in instructions:
+        err = run_code(instruction, bit, reg)
+        if err:
+            print("program err")
+            break
+    print(reg)
 
 def check_model(alu, model):
     reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0}
@@ -32,14 +51,6 @@ def check_model(alu, model):
                 print("program err")
                 break
         break
-
-def check_bit(bit, instructions, reg):
-    reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0}
-    for instruction in instructions:
-        err = run_code(instruction, bit, reg)
-        if err:
-            print("program err")
-            break
     print(reg)
 
 def run_code(instruction, inpnum, reg):
@@ -88,8 +99,16 @@ solution("./inputs/q24.txt")
 
 # div z 1
 # add x 15
-# mul y x
-# add y 1
-# mul y 0
 # add y 13
 # mul y x
+
+#  z 1 x 15 y 13
+def common(reg, div_z, add_x, add_y):
+    reg["x"] += reg["z"]
+    reg["x"] % 26
+    reg["z"] /= div_z
+    reg["x"] += add_x
+    reg["x"] = 1 if reg["w"] == reg["x"] else 0
+    
+    
+    pass
