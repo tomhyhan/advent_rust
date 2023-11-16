@@ -12,21 +12,38 @@ def solution(filename):
         else:
             instructions.append(line)
 
-    for i in range(1,10):
-        reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0 }
-        check_bit(i, alu[0],reg)
-    test(alu[1])
-    # du = defaultdict(int)
-    # for ins in alu:
-    #     for inss in ins:
-    #         du[inss] += 1
-    
-    # for k, v in du.items():
-    #     if v < 14:
-    #         print(k, v)
-    # print(du)
-    
-# {'w': 9, 'x': 0, 'y': 0, 'z': 18}
+    # for i in range(1,10):
+    #     reg = {'w': 0, 'x': 0, 'y': 0, 'z': 8599750}
+    #     check_bit(i, alu[5],reg)
+    #     print(reg["z"] % 26)
+
+# 5 7 8 10 11 12 13
+    reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0 }
+    # check_bit(7, alu[0], reg)
+    # [13, 16, 2, 8,    11, 12, 15]
+    # [13]
+    # [-9]
+    # print(alu[13])
+    # [13, 16, 2, 8, 11, 12]
+    # [-11, ]
+
+    check_bit(5, alu[0], reg)
+    check_bit(3, alu[1], reg)
+    check_bit(9, alu[2], reg)
+    check_bit(9, alu[3], reg)
+    check_bit(9, alu[4], reg)
+    check_bit(9, alu[5], reg)
+    check_bit(9, alu[6], reg)
+    check_bit(5, alu[7], reg)
+    check_bit(8, alu[8], reg)
+    check_bit(2, alu[9], reg)
+    check_bit(9, alu[10], reg)
+    check_bit(3, alu[11], reg)
+    check_bit(9, alu[12], reg)
+    check_bit(9, alu[13], reg)
+    x = "53999995829399"
+    check_model(alu, "53999995829399")
+
 def test(instructions):
     for i in range(0, 23):
         for j in range(1,10):
@@ -34,7 +51,6 @@ def test(instructions):
             check_bit(j, instructions, reg)
                 
 def check_bit(bit, instructions, reg):
-    # reg = {'w': 0, 'x': 0, 'y': 0, 'z': 0}
     for instruction in instructions:
         err = run_code(instruction, bit, reg)
         if err:
@@ -50,7 +66,6 @@ def check_model(alu, model):
             if err:
                 print("program err")
                 break
-        break
     print(reg)
 
 def run_code(instruction, inpnum, reg):
@@ -85,30 +100,3 @@ def parse_reg(src,reg):
     return reg[src] if src.isalpha() else int(src)
 
 solution("./inputs/q24.txt")
-
-# inp w
-# mul x 0
-# add x z
-# mod x 26
-# eql x w
-# eql x 0
-# add y 25
-# mul z y
-# add y w
-# add z y
-
-# div z 1
-# add x 15
-# add y 13
-# mul y x
-
-#  z 1 x 15 y 13
-def common(reg, div_z, add_x, add_y):
-    reg["x"] += reg["z"]
-    reg["x"] % 26
-    reg["z"] /= div_z
-    reg["x"] += add_x
-    reg["x"] = 1 if reg["w"] == reg["x"] else 0
-    
-    
-    pass
