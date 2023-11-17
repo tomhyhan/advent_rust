@@ -21,6 +21,7 @@ int split_string(Vector *vector, const char delimeter[],char line[]);
   int main(void) {                                            \
     FILE *file = read_file_data(filename);                    \
     part1(file);                                              \
+    fseek(file, 0, SEEK_SET);                                 \
     part2(file);                                              \
     fclose(file);                                             \
     return EXIT_SUCCESS;                                      \
