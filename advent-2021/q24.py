@@ -27,23 +27,29 @@ def solution(filename):
     # [13, 16, 2, 8, 11, 12]
     # [-11, ]
 
-    check_bit(5, alu[0], reg)
-    check_bit(3, alu[1], reg)
-    check_bit(9, alu[2], reg)
-    check_bit(9, alu[3], reg)
-    check_bit(9, alu[4], reg)
-    check_bit(9, alu[5], reg)
-    check_bit(9, alu[6], reg)
-    check_bit(5, alu[7], reg)
-    check_bit(8, alu[8], reg)
-    check_bit(2, alu[9], reg)
-    check_bit(9, alu[10], reg)
-    check_bit(3, alu[11], reg)
-    check_bit(9, alu[12], reg)
-    check_bit(9, alu[13], reg)
-    x = "53999995829399"
-    check_model(alu, "53999995829399")
 
+    check_bit(1, alu[0], reg)
+    check_bit(1, alu[1], reg)
+    check_bit(7, alu[2], reg)
+    check_bit(2, alu[3], reg)
+    check_bit(1, alu[4], reg)
+    check_bit(1, alu[5], reg)
+    check_bit(5, alu[6], reg)
+    check_bit(1, alu[7], reg)
+    check_bit(1, alu[8], reg)
+    check_bit(1, alu[9], reg)
+    check_bit(8, alu[10], reg)
+    check_bit(1, alu[11], reg)
+    check_bit(7, alu[12], reg)
+    check_bit(5, alu[13], reg)
+
+    # print(alu[9])
+    # print(alu[10])
+    
+    # x = "53999995829399"
+    x = "11721151118175"
+    check_model(alu, x)
+    print()
 def test(instructions):
     for i in range(0, 23):
         for j in range(1,10):
