@@ -1,7 +1,7 @@
-#include "lib.h"
+#include "dynamic.h"
 
-void part1(void) {
-    printf("hello world");
+int main(void)
+{
+    test();
+    return 0;
 }
-
-SOLUTION("asdf")
