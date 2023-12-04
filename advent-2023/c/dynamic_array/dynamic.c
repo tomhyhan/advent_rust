@@ -10,7 +10,23 @@ void *_create_list(size_t init_cap, size_t stride)
     list[CAPACITY] = init_cap;
     list[LENGTH] = 0;
     list[STRIDE] = stride;
-    return (void *)(list + LIST);
+    return (void *)(list + LIST_FIELD);
+}
+
+size_t _list_field_get(void* list, size_t field) {
+    return ((size_t*)(list) - LIST_FIELD)[field];
+}
+
+// void _list_field_set(void* list, size_t field, size_t value) {
+//     return 
+// }
+
+void _resize_list(void* list) {
+    // void* temp = _create_list( LIST_RESIZE_FACTOR * )
+}
+
+void _push_list() {
+
 }
 
 int main()
