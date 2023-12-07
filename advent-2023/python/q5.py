@@ -25,11 +25,30 @@ def part1(seeds, mappings):
 
 def part2(seeds, mappings):
     stack = []
+    locations = []
     for i in range(0,len(seeds),2):
         src, range_ = seeds[i], seeds[i+1]
-        
-        print(i)
-    
+        stack.append((src, src + range_ - 1, 0))
+    while stack:
+        seed_start, seed_end, map_idx = stack.pop()
+        # print(seed_start, seed_end, map_idx)
+        if map_idx == 7:
+            locations.append(seed_start)
+            continue
+        fertilizers  = mappings[map_idx]
+        found = False
+        for f in fertilizers:
+            if f.src_range[0] <= seed_start <= f.src_range[1]:
+                if seed_end > f.src_range[1]:
+                    stack.append((seed_start - f.diff, f.src_range[1] - f.diff, map_idx + 1))
+                    stack.append((f.src_range[1] + 1, seed_end, map_idx))
+                else:
+                    stack.append((seed_start - f.diff, seed_end - f.diff, map_idx + 1))
+                found = True
+                break
+        if not found:
+            stack.append((seed_start, seed_end, map_idx + 1))
+    print(min(locations))
 
 def parse_lnput(file):
     blocks = iter(file.split("\n\n"))
@@ -52,8 +71,8 @@ def solution():
     filename = "./inputs/q5.txt"
     file = open(filename).read()
     seeds, fertilizers = parse_lnput(file)
-    # part1(seeds, fertilizers)
+    part1(seeds, fertilizers)
     part2(seeds, fertilizers)
-    pass
+
 
 solution()
