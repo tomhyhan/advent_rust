@@ -10,11 +10,19 @@ class Types(IntEnum):
     ONE_PAIR = 6
     HIGH_CARD = 7
 
+# CARD_RANKS = {
+#     "A": 'e', 
+#     "K": 'd', 
+#     "Q": 'c', 
+#     "J": 'b',
+#     "T": 'a',
+# }
+# part2
 CARD_RANKS = {
     "A": 'e', 
     "K": 'd', 
     "Q": 'c', 
-    "J": 'b',
+    "J": '1',
     "T": 'a',
 }
 
@@ -45,9 +53,15 @@ def part1(pairs):
     # 249467918 X
     # 249620439 X
     # 250254244
+    # 250606082 X
     print(winnings)
 
 def parse_type(hand):
+    counter = Counter(hand)
+    max_cards = [[cnt, card] for card, cnt in counter.items() if card != 'J'] 
+    if max_cards:
+        max_card = max(max_cards)
+        hand = hand.replace('J', max_card[1])
     counter = Counter(hand)
     c_len = len(counter)
     if c_len == 1:
@@ -82,4 +96,19 @@ def solution():
     pairs = parse(lines)
     part1(pairs)    
 
-solution()
+#improve with entropy
+# def eval(line):
+#     hand, bid = line.split()
+#     hand = hand.translate(str.maketrans('TJQKA', face))
+#     print(hand)
+#     best = max(type(hand.replace('0', r)) for r in hand)
+#     return best, hand, int(bid)
+
+# def type(hand):
+#     return sorted(map(hand.count, hand), reverse=True)
+
+# for face in 'ABCDE', 'A0CDE':
+#     print(sum(rank * bid for rank, (*_, bid) in
+#         enumerate(sorted(map(eval, open('./inputs/q7.txt'))), start=1)))
+    
+# solution()
