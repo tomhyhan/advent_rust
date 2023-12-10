@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "call_lib.h"
 
 bool starts_with(char line[], char new_num[]) {

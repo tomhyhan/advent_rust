@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #ifndef CALL_LIB_H
 #define CALL_LIB_H
 
