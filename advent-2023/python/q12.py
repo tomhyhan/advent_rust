@@ -94,6 +94,8 @@ def find_matches(spring, arrange, question_idxs):
 
 def create_matches(spring, arrage, start):
     
+    
+    
     total = 0
     current_arr = arrage.popleft()
     current_pattern = ['#'] * current_arr + ['.']
