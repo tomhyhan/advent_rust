@@ -45,7 +45,6 @@ def part1(lines):
         matches = find_matches1(possibles, arrange)
         total += matches            
     print(total)
-    print(4  * (5 ** 4))
 
 def group_spring(spring):
     grp = []
@@ -92,29 +91,67 @@ def find_matches(spring, arrange, question_idxs):
         question_idxs.appendleft(poped)
     return matches
 
-def create_matches(spring, arrage, start):
+def create_matches(spring, arrange, start, memo):
+    key = (spring, tuple(arrange), start)
+    if key in memo:
+        return memo[key]
+
+    if not arrange:
+        if '#' not in spring:
+            return 1
+        else:
+            return 0
     
-    
-    
+    matches = 0
+    for i in range(start, len(spring)):
+        poped = arrange.popleft()
+        new_spring = list(spring)
+        matching_p = ['@'] * poped
+        for j in range(i,min(len(spring),i+poped)):
+            if new_spring[j] in "#?":
+                new_spring[j] = '@'
+        current_p = new_spring[i:i+poped]
+        left_is_dot = True if i == 0 else new_spring[i-1] in '.?'
+        right_is_dot = True if i+poped >= len(new_spring) -1 else new_spring[i+poped] in '.?'
+        is_match = matching_p == current_p
+        if left_is_dot and right_is_dot and is_match:
+            matches += create_matches(''.join(new_spring), arrange, i+poped+1, memo)
+        arrange.appendleft(poped)
+    memo[key] = matches
+    return matches
+
+def go_deep(spring, arrange, si, ai, memo):
+    if (si,ai) in memo:
+        return memo[(si,ai)]
     total = 0
-    current_arr = arrage.popleft()
-    current_pattern = ['#'] * current_arr + ['.']
-    for i in range(start, len(spring), current_arr):
-        pattern = list(spring[i:i+current_arr + 1])
-        for j in range(len(pattern)-1):
-            if pattern[j] == '?':
-                pattern[j] = '#'
-        pattern[-1] = '.' if pattern[-1] == '?' else pattern[-1]
-        if current_pattern == pattern:
-            total += create_matches(spring, pattern, i+2)
-    arrage.appendleft(current_arr)
+
+    if si >= len(spring):
+        return ai == len(arrange)
+
+    if spring[si] in '.?':
+        total += go_deep(spring, arrange, si + 1, ai, memo)
+    
+    if spring[si] in '#?' and ai < len(arrange):
+        p = int(arrange[ai])
+        is_match = si + p <= len(spring) and '.' not in spring[si:si+p]
+        is_right_dot = True if (si + p) >= len(spring) else spring[si + p] in '.?'
+        if is_match and is_right_dot:       
+            total += go_deep(spring, arrange, si + p + 1, ai + 1, memo)
+            
+    memo[(si,ai)] = total
     return total
+    
 def part2(lines):
+    total = 0
+    factor = 5
     for line in lines:
         spring, arrange = line.split()
-        arrange = deque([int(a) for a in arrange.split(',')])
-        create_matches(spring, arrange, 0)
-        
+        spring = '?'.join([spring] * factor)
+        arrange = ','.join([arrange] * factor)
+        memo = {}
+        matches = go_deep(spring, arrange.split(','),0, 0, memo)
+        total += matches
+    print(total)
 def solution():
     filename = "./inputs/q12.txt"
     lines = open(filename).read().split('\n')
@@ -122,7 +159,7 @@ def solution():
     part2(lines)
 
 solution()
-"""
+""" failed 1st attempt
 def part1(lines):
     total = 0
     for line in lines:
@@ -144,7 +181,7 @@ def part1(lines):
     print(total)
 """
 
-"""
+""" failed 2nd attempt
 def part2(lines):
     for line in lines:
         spring, arrange = line.split()
@@ -152,4 +189,19 @@ def part2(lines):
         arrange = list(map(int, arrange.split(',')))
         matches = find_matches(list(spring), arrange, question_idxs)
         print(matches)
+"""
+
+""" failed 3rd attempt :):)
+def part2(lines):
+    total = 0
+    factor = 5
+    for line in lines:
+        spring, arrange = line.split()
+        spring = '?'.join([spring] * factor)
+        arrange = ','.join([arrange] * factor)
+        arrange = deque([int(a) for a in arrange.split(',')])
+        memo = {}
+        matches = create_matches(spring, arrange, 0, memo)
+        total += matches
+    print(total)
 """
