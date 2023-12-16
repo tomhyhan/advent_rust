@@ -3,25 +3,20 @@
 static int MIN_CARDS[] = {12,13,14};
 enum {RED, GREEN, BLUE};
 
-void part1(char* input) {
+void parse(char* input, char pattern[], int result, int next) {
     int offset = 0, read = 0;
-    char line[150];
-    while(sscanf(input+offset, "Game %*d:%[^\n]%n", line, &read) != EOF) {
-        char delim[] = ";";
-        char* token = strtok(line, delim);
-        while (token) {
-            char* cards = strtok(token, ",");
-            while (cards) {
-                printf("cards: %s\n", cards);
-                cards = strtok(NULL, ",");
-            }
-            token = strtok(NULL, delim);
-        }
-        offset += read;
+    char line[200];
+    while(sscanf(input+offset, pattern, line, &read) == result) {
+        char pattern[] = "%[^;]%n";
+        parse1(line, pattern, 1, 1);
+        offset += read + next;
     } 
-    
-    TEST:
-        printf("asdf\n");
+}
+
+
+void part1(char* input) {
+    char pattern[] = "Game %*d:%[^\n]%n";
+    parse(input, pattern, 1, 1);
 }
 
 void part2(char* input) {
