@@ -27,12 +27,9 @@ class BoxInfo:
             self.head = node 
             self.current = node
         else:
-            print(self.current)
             node.prev = self.current
-            self.next = node
+            self.current.next = node
             self.current = node
-        print(node.prev)
-        print("head", self.head.next)
         self.tracker[label] = node
         # print(self.current)
     
@@ -49,7 +46,8 @@ class BoxInfo:
             removed.prev.next = removed.next
         if removed.next:
             removed.next.prev =  removed.prev
-
+        del self.tracker[label]
+        
     def __repr__(self):
         return f"{self.tracker} {self.head}"
     
@@ -70,7 +68,7 @@ def part1(strings):
 
 def part2(strings):
     # ordered-dict, hash + linkedlist, list
-    boxes = [BoxInfo() for i in range(256)]
+    boxes = [BoxInfo() for _ in range(256)]
     for string in strings:
         if '=' in string:
             label, focal = string.split('=')
@@ -81,18 +79,23 @@ def part2(strings):
             hashed = hash(label)
             boxes[hashed].remove(label)
     
-    # print(boxes[0])
-    print(boxes[3].tracker["pc"].next)
-    
-    # total = 0
-    # for box_num, box in enumerate(boxes):
-    #     current = box
-    #     for idx, (label, focal) in enumerate(box.items()):
-    #         slot = idx + 1
-    #         box_len = box_num + 1
-    #         # print(slot, box_len, focal)
-    #         total += calc_power(slot, box_len, focal)
-    # print(total)
+    total = 0
+    for box_num, box in enumerate(boxes):
+        current = box.head
+        if not current:
+            continue
+        slot =1 
+        box_len = box_num + 1
+        while current:
+            total += calc_power(slot, box_len, current.value)
+            slot += 1
+            current = current.next
+    print(total)
+        # for idx, (label, focal) in enumerate(box.items()):
+        #     slot = idx + 1
+        #     box_len = box_num + 1
+        #     # print(slot, box_len, focal)
+        #     total += calc_power(slot, box_len, focal)
 
 def solution():
     filename = "./inputs/q15.txt"
