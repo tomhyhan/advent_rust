@@ -16,14 +16,13 @@ def print_debug(grid, debug):
         print(s)
 
 def part1(grid):
-    heap = [(0,0,0,1,0,set())]
+    heap = [(0,0,0,1,0)]
     end = (len(grid)-1, len(grid[0])-1)
     visited = {}
     while heap:
         energy, row, col, dir, limit, debug = heapq.heappop(heap)
 
         if (row,col) == end:
-            print_debug(grid, debug)
             print("energy", energy)
             break
 
@@ -39,21 +38,18 @@ def part1(grid):
             new_limit = limit + 1 if new_dir == dir else 1
             new_energy = energy + grid[nrow][ncol]
             key = (nrow, ncol, new_dir, new_limit)
-            new_d = deepcopy(debug)
-            new_d.add((nrow, ncol))
             if key not in visited or new_energy < visited[key]:
                 visited[key] = new_energy
-                heapq.heappush(heap, (new_energy, nrow, ncol, new_dir, new_limit, new_d))
+                heapq.heappush(heap, (new_energy, nrow, ncol, new_dir, new_limit))
 
 def part2(grid):
-    heap = [(0,0,0,1,0,set())]
+    heap = [(0,0,0,1,0)]
     end = (len(grid)-1, len(grid[0])-1)
     visited = {}
     while heap:
-        energy, row, col, dir, limit, debug = heapq.heappop(heap)
+        energy, row, col, dir, limit = heapq.heappop(heap)
 
         if (row,col) == end and limit >= 4:
-            print_debug(grid, debug)
             print("energy", energy)
             break
 
@@ -71,11 +67,9 @@ def part2(grid):
             new_limit = limit + 1 if new_dir == dir else 1
             new_energy = energy + grid[nrow][ncol]
             key = (nrow, ncol, new_dir, new_limit)
-            new_d = deepcopy(debug)
-            new_d.add((nrow, ncol))
             if key not in visited or new_energy < visited[key]:
                 visited[key] = new_energy
-                heapq.heappush(heap, (new_energy, nrow, ncol, new_dir, new_limit, new_d))
+                heapq.heappush(heap, (new_energy, nrow, ncol, new_dir, new_limit))
 
 # part1 energy 843
 
@@ -84,6 +78,7 @@ def solution():
     grid = [[int(num) for num in line] for line in open(filename).read().split('\n')]
     # part1(grid)
     part2(grid)
+    # possible improve with min, max available turns 
 solution()
 
 
