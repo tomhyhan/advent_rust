@@ -3,11 +3,16 @@ from collections import namedtuple
 MAX = float("inf")
 MIN = float("-inf")
 
+# 0 means R, 1 means D, 2 means L, and 3 means U
 DIRECTIONS = {
     'R': (0, 1),
     'L': (0, -1),
     'U': (-1, 0),
-    'D': (1, 0)
+    'D': (1, 0),
+    '0': (0, 1),
+    '2': (0, -1),
+    '3': (-1, 0),
+    '1': (1, 0),
 }
 
 
@@ -70,24 +75,22 @@ def part2(digplans):
     row, col = 0, 0
     length = 0
     for digplan in digplans:
-        head_to = DIRECTIONS[digplan.dir]
-        distance = digplan.steps
+        head_to = DIRECTIONS[digplan.rgb[-1]]
+        distance = int(digplan.rgb[1:-1], 16)
         row += head_to[0] * distance
         col += head_to[1] * distance
         length += distance
         coords.append((row, col))
     coords = coords[::-1]
     area = 0
-    print(coords)
     # coords = [(0, 0), (0, 10), (10, 10), (10, 0)]
     for idx in range(len(coords)):
         first, second = idx % len(coords), (idx+1) % len(coords)
-        print(first, second)
         y, x = coords[first]
         y1, x2 = coords[second]
         area += y * x2 - x * y1
     print(int(area/2), length)
-    print(int(area/2) + length / 2 + 1)
+    print(int(int(area/2) + length / 2 + 1))
     #  i + b /2 -1
     # for digplan in digplans:
     #     distance = int(digplan.rgb[1:-1], 16)
