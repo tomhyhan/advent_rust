@@ -83,7 +83,7 @@ def part2(digplans):
         coords.append((row, col))
     coords = coords[::-1]
     area = 0
-    # coords = [(0, 0), (0, 10), (10, 10), (10, 0)]
+
     for idx in range(len(coords)):
         first, second = idx % len(coords), (idx+1) % len(coords)
         y, x = coords[first]
@@ -91,12 +91,6 @@ def part2(digplans):
         area += y * x2 - x * y1
     print(int(area/2), length)
     print(int(int(area/2) + length / 2 + 1))
-    #  i + b /2 -1
-    # for digplan in digplans:
-    #     distance = int(digplan.rgb[1:-1], 16)
-    #     dir = digplan.rgb[-1]
-    #     print(distance, dir)
-    #     pass
 
 
 def parse(lines):
