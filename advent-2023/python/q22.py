@@ -1,8 +1,4 @@
 from dataclasses import dataclass
-from collections import defaultdict
-
-# how to find bottom z occupency?
-
 
 @dataclass
 class Range:
@@ -22,6 +18,7 @@ class Block:
         self.y = Range(int(y[0]), int(y[1]))
         self.z = Range(int(z[0]), int(z[1]))
         self.supports = set()
+        self.depends = set()
 
     def __repr__(self) -> str:
         return f"{self.x} {self.y} {self.z}"
@@ -49,13 +46,12 @@ def find_blocks(z, blocks):
 
 def can_fit(block, bot_blocks):
     x_y_fit = True
-    # print("bot_blocks", bot_blocks)
-    # print(block)
     for bot_block in bot_blocks:
         can_x_fit = bot_block.x.max < block.x.min or bot_block.x.min > block.x.max
         can_y_fit = bot_block.y.max < block.y.min or bot_block.y.min > block.y.max
         if not (can_x_fit or can_y_fit):
             bot_block.supports.add(block)
+            block.depends.add(bot_block)
             x_y_fit = False
     return x_y_fit
 
@@ -63,9 +59,7 @@ def can_fit(block, bot_blocks):
 def move_block(block, blocks):
     while block.z.min > 1:
         bot_z = block.z.min - 1
-        # print(bot_z)
         bot_blocks = find_blocks(bot_z, blocks)
-        # print(bot_blocks)
         if not can_fit(block, bot_blocks):
             break
         block.z.min -= 1
@@ -92,27 +86,31 @@ def part1(blocks):
     removed = 0
     for block in blocks:
         if can_disintegrate(block, blocks):
-            # print(block)
             removed += 1
     print(removed)
 
-
-#  D E
-# C B C
-# A   C
-
-def count_falls():
-    pass
-
+def count_falls(block, depends):
+    falls = 0
+    stack = [block]
+    while stack:
+        cblock = stack.pop()
+        for support in cblock.supports:
+            skey = str(support)
+            dkey = str(cblock)
+            if dkey in depends[skey]: 
+                depends[skey].remove(dkey) 
+                if len(depends[skey]) == 0:
+                    falls += 1
+                    stack.append(support)
+    return falls
 
 def part2(blocks):
     falls = 0
     for block in blocks:
         if not can_disintegrate(block, blocks):
-            falls += len(count_falls(block, blocks)) - 1
-    # 110260 X
+            depends = {str(b): set([str(d) for d in b.depends]) for b in blocks}
+            falls += count_falls(block, depends)
     print(falls)
-
 
 def solution():
     filename = "./inputs/q22.txt"
@@ -120,7 +118,7 @@ def solution():
     blocks.sort(key=lambda x: x.z.min)
     for block in blocks:
         move_block(block, blocks)
-    # part1(blocks)
+    part1(blocks)
     part2(blocks)
 
 
