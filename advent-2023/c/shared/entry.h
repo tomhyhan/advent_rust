@@ -5,10 +5,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #define TRUE 1
 #define FALSE 0
 #define bool int
+#define MAX(a,b) (a > b? a : b)
+#define MIN(a,b) (a > b? b : a)
 
 char *read_input(char filename[])
 {
