@@ -6,12 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <inttypes.h>
 
 #define TRUE 1
 #define FALSE 0
 #define bool int
-#define MAX(a,b) (a > b? a : b)
-#define MIN(a,b) (a > b? b : a)
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 #define ARRAY_LEN(arr) ((int)(sizeof(arr) / sizeof(arr[0])))
 
 char *read_input(char filename[])
@@ -44,8 +46,9 @@ char *read_input(char filename[])
 #define SOLUTION(filename)                      \
     int main(void)                              \
     {                                           \
-        char* input = read_input(filename);      \
-        part1(input);                                \
+        char* input = read_input(filename);     \
+        part1(input);                           \
+        input = read_input(filename);           \
         part2(input);                           \
         free(input);                            \
         return 0;                               \
