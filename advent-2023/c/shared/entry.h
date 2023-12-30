@@ -12,6 +12,7 @@
 #define bool int
 #define MAX(a,b) (a > b? a : b)
 #define MIN(a,b) (a > b? b : a)
+#define ARRAY_LEN(arr) ((int)(sizeof(arr) / sizeof(arr[0])))
 
 char *read_input(char filename[])
 {

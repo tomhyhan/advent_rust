@@ -26,8 +26,8 @@ void _list_field_set(void* list, size_t field, size_t value) {
 }
 
 void* _resize_list(void* list) {
-    void* temp = _create_list(LIST_RESIZE_FACTOR * list_len(list), list_stride(list));
-    memcpy(temp, list, list_len(list));
+    void* temp = _create_list(LIST_RESIZE_FACTOR * list_capacity(list), list_stride(list));
+    memcpy(temp, list, list_len(list) * list_stride(list));
     _list_field_set(temp, LENGTH, list_len(list));
     _destroy_list(list);
     return temp;
