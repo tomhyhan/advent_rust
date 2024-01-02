@@ -5,4 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
+size_t hash_65599(const char* string, size_t len);
+
 #endif

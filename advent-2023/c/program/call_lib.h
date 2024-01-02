@@ -5,5 +5,6 @@
 
 #include "../dynamic_array/dynamic.h"
 #include "../shared/entry.h"
+#include "../hashmap/hashmap.h"
 
 #endif
