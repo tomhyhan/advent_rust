@@ -58,42 +58,35 @@ int compare_order(card_t* a, card_t* b) {
     return 0;
 }
 
-void add_count(card_t* card, int bucket[]) {
+void add_count(char* hand, int bucket[]) {
     int i;
     for (i=0; i<5; i++) {
-        size_t hash_key = hash_65599(&card->hand[i], 1);
+        size_t hash_key = hash_65599(&hand[i], 1);
         bucket[hash_key % 37]++;
     }
 }
 
-int use_joker(card_t* card, int bucket[]) {
+void use_joker(char* hand, int bucket[]) {
     int i;
-    int most_freq[2] = {0,0};
     size_t j_key = hash_65599("J", 1);
+    int most_freq[2] = {0, -1};
+
     for (i=0; i<5; i++) {
-        size_t hash_key = hash_65599(&card->hand[i], 1);
+        size_t hash_key = hash_65599(&hand[i], 1);
+        if (hand[i] == 'J') {
+            continue;
+        }
         if (most_freq[0] < bucket[hash_key % 37]) {
             most_freq[0] = bucket[hash_key % 37];
-            most_freq[1] = hash_key % 37;
-        } else if (hash_key != j_key && most_freq[0] <= bucket[hash_key % 37]) {
-            most_freq[0] = bucket[hash_key % 37];
-            most_freq[1] = hash_key % 37;
-        }
-    }
-
-    if (j_key == most_freq[1]) {
-        return most_freq[1];
+            most_freq[1] = hand[i];
+        } 
     }
 
     for (i=0; i<5; i++) {
-        if (card->hand[i] == 'J') {
-            // size_t hash_key = hash_65599(&card->hand[i], 1);
-            // size_t hash_key = hash_65599("J", 1);
-            bucket[most_freq[1]] += 1;
-            bucket[j_key] -= 1;
+        if (hand[i] == 'J') {
+            hand[i] = most_freq[1];
         }
     }
-    return most_freq[1];
 }
 
 int compare_type(card_t* a, card_t* b) {
@@ -101,24 +94,27 @@ int compare_type(card_t* a, card_t* b) {
     size_t a_idx, b_idx;
     int a_count[37] = {0};
     int b_count[37] = {0};
-    add_count(a, a_count);
-    add_count(b, b_count);
+    char a_joker[6];
+    char b_joker[6];
+    memcpy(a_joker, a->hand, strlen(a->hand)+1);
+    memcpy(b_joker, b->hand, strlen(b->hand)+1);
 
-    a_idx = use_joker(a, a_count);
-    b_idx = use_joker(b, b_count);
+    add_count(a_joker, a_count);
+    add_count(b_joker, b_count);
+    
+    use_joker(a_joker, a_count);
+    use_joker(b_joker, b_count);
 
-    // printf("%d\n", b_count[hash_65599("2", 1) % 37]);
-    // printf("%d\n", a_count[hash_65599("2", 1) % 37]);
+    memset(a_count, 0, sizeof(a_count));
+    memset(b_count, 0, sizeof(b_count));
+    add_count(a_joker, a_count);
+    add_count(b_joker, b_count);
 
-    printf("%d\n", a_count[a_idx]);
-    printf("%d\n", b_count[b_idx]);
-    printf("%d\n", b_idx);
-    printf("%d\n", a_idx);
     for (i=0; i<5; i++) {
-        entro_a += a->hand[i] == 'J'? a_count[a_idx] : a_count[hash_65599(&a->hand[i], 1) % 37];
-        entro_b += b->hand[i] == 'J'? b_count[b_idx]: b_count[hash_65599(&b->hand[i], 1) % 37];
+        entro_a += a_count[hash_65599(&a_joker[i], 1) % 37];
+        entro_b += b_count[hash_65599(&b_joker[i], 1) % 37];
     }
-    // printf("entro %d %d\n", entro_a, entro_b);
+    // printf("%d %d\n", entro_a, entro_b);
     return entro_a - entro_b;
 }
 
@@ -136,15 +132,10 @@ void part1(char* input) {
     int i;
     card_t* cards = parse(input);
     size_t winnings = 0;
-    char test[13] = "23456789JTKAQ";
-    for (i=0; i < 13; i++ ) {
-        printf("%lld\n", hash_65599(&test[i], 1) %37);
-    }
-    puts("");    
+  
     qsort(cards, list_len(cards), list_stride(cards), compare);
 
     for (i=0;i< list_len(cards); i++) {
-        // printf("%s\n", cards[i].hand);
         winnings += (i + 1) * cards[i].strength;
     }
 
