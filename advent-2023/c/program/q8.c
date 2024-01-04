@@ -114,7 +114,6 @@ int64_t lcm(int* nums) {
     return result;
 }
 
-
 void part2(char* input) {
     network_t network = parse(input);
     size_t i = 0;
