@@ -26,6 +26,7 @@ char** create_grid(char* input) {
 
     return grid;
 }
+
 bool within_boundary(size_t row, size_t col) {
     if (row >=0 && row < GRID_SIZE && col >=0 && col < GRID_SIZE) return TRUE;
 
@@ -119,6 +120,7 @@ void part1(char* input) {
     } while (grid[pos[0][0]][pos[0][1]] != 'S'); 
 
     printf("steps: %lld\n", (steps + 1));
+    printf("answer: %lld\n", (steps + 1) / 2);
 
     free(*grid);
     free(grid);
@@ -157,7 +159,7 @@ void part2(char* input) {
     }
 
     area /= 2;
-    
+
     // i ??
     // area = i + (46 / 2) - 1
     printf("area %lld\n", area);
@@ -167,7 +169,6 @@ void part2(char* input) {
     free(*grid);
     free(grid);
 }
-
 
 // for (row=0; row < GRID_SIZE; row++) {
 //     for (col=0; col < GRID_SIZE; col++) {
