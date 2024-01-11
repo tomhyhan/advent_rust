@@ -12,7 +12,7 @@ enum
     LIST_FIELD
 };
 
-#define INIT_CAP 100
+#define INIT_CAP 1
 #define LIST_RESIZE_FACTOR 2
 
 void *_create_list(size_t init_cap, size_t stride);

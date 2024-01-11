@@ -1,4 +1,5 @@
 #include "dynamic.h"
+#include "stdio.h"
 
 // src: https://github.com/eignnx/dynarray
 

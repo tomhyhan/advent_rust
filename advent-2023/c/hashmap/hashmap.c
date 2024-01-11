@@ -1,6 +1,8 @@
 #include "hashmap.h"
 
-typedef struct Node {
+typedef struct node node_t;
+
+typedef struct node {
     char* key;
     void* value;
     node_t* next;

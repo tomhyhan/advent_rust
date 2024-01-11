@@ -1,12 +1,12 @@
 #include "call_lib.h"
 
-enum {GRID_SIZE = 10};
+enum {GRID_SIZE = 110};
 
 
 //  (-1,0) (1,0) (0,-1) (0,1)
 typedef struct {
-    int row, col;
     int dy, dx;
+    int row, col;
 } dir_t;
 
 char** create_grid(char* input) {
@@ -38,55 +38,56 @@ void print_grid(char** grid) {
     puts("");
 }
 
-void print_grid1(char grid[][GRID_SIZE]) {
+size_t print_grid1(char grid[][GRID_SIZE]) {
     size_t row, col;
+    size_t energy = 0;
     for (row=0; row < GRID_SIZE; row++) {
         for (col=0; col < GRID_SIZE; col++) {
-            printf("%c", grid[row][col]);
+            // printf("%c", grid[row][col]);
+            if (grid[row][col] == '#') {
+                energy++;
+            }
         }
-        puts("");
+        // puts("");
     }
-    puts("");
+    // puts("");
+    return energy;
 }
 
-bool dir_in_energized(dir_t dir, dir_t* energized) {
-    size_t i;
+// bool dir_in_energized(dir_t dir, char energized[][GRID_SIZE]) {
+//     size_t i;
+//     size_t len = list_len(energized);
     
-    // printf("here?\n");
-    // printf("%lld\n", list_len(energized));
-    for (i=0; i < list_len(energized); i++) {
-        dir_t dir_in = energized[i];
-        // printf("%d\n", i);
-        // printf("%d %d %d %d\n", dir.row, dir.col, dir.dy, dir.dx);
-        // printf("%d %d %d %d\n", dir_in.row, dir_in.col, dir_in.dy, dir_in.dx);
-        // puts("");
-        // if (memcmp(&dir, &dir_in, sizeof(dir_t)) == 0) {
-        //     return TRUE;
-        // }
-        // printf("%lld\n", i);
-        if (dir.col == dir_in.col && dir.row == dir_in.row && dir.dx == dir_in.dx && dir.dy == dir_in.dy) {
-            return TRUE;
-        }
-    }
-    // printf("here end?\n");
+//     for (i=0; i < len; i++) {
+//         dir_t dir_in = energized[i];
+//         if (dir.col == dir_in.col && dir.row == dir_in.row && dir.dx == dir_in.dx && dir.dy == dir_in.dy) {
+//             return TRUE;
+//         }
+//     }
+//     // printf("here end?\n");
+//     return FALSE;
+// }
+
+bool is_not_border(int row, int col) {
+    if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return TRUE; 
     return FALSE;
 }
 
-void light_bounces(dir_t dir, dir_t* energized, char** grid) {
+void light_bounces(dir_t dir, char energized[][GRID_SIZE], char** grid) {
     dir_t new_dir = {0};
     char tile;
 
-    if (dir_in_energized(dir, energized)) return;
-    printf("%d %d %d %d\n", dir.row, dir.col, dir.dy, dir.dx);
-    push_list(energized, dir);
-    
     new_dir.col = dir.col + dir.dx;
     new_dir.row = dir.row + dir.dy;
 
-    if (new_dir.row < 0 || new_dir.row >= GRID_SIZE || new_dir.col < 0 || new_dir.col >= GRID_SIZE) return;
-
+    if (is_not_border(new_dir.row, new_dir.col)) return;
 
     tile = grid[new_dir.row][new_dir.col];
+    if (energized[new_dir.row][new_dir.col] == '#' && (tile == '|' || tile == '-')) {   
+        return;
+    }
+
+    energized[new_dir.row][new_dir.col] = '#';
     // printf("%c %d %d %d %d\n", tile, new_dir.row, new_dir.col, dir.dy, dir.dx);
     
     switch (tile)
@@ -133,28 +134,49 @@ void light_bounces(dir_t dir, dir_t* energized, char** grid) {
 void part1(char* input) {
     dir_t dir = {0};
     char** grid = create_grid(input);
-    dir_t* energized = create_list(dir_t);
-    // size_t i;
-    // for (i=0; i < 100; i++) {
-    //     dir_t t = {0};
-    //     push_list(energized, t);
-    // }
-    // printf("%lld\n", list_len(energized));
-    
+    char energized[GRID_SIZE][GRID_SIZE];
+
+    memset(energized, '.', sizeof(energized));
     dir.col = -1;
     dir.dx = 1;
-    
     light_bounces(dir, energized, grid);
     
-    printf("len %d\n", list_len(energized));
+    printf("len %d\n", 3);
+    print_grid1(energized);
     
-    destroy_list(energized);
+    
     free(*grid);
     free(grid);
 }
 
 void part2(char* input) {
+    char** grid = create_grid(input);
+    size_t max_energy = 0;
+    size_t row, col, i;
+    int directions[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
+    for (row=0; row < GRID_SIZE; row++) {
+        for (col=0; col < GRID_SIZE; col++) {
+            for (i=0; i < 4; i++) {
+                dir_t dir = {0};
+                char energized[GRID_SIZE][GRID_SIZE];
+                memset(energized, '.', sizeof(energized));
+                dir.row = row + directions[i][0];
+                dir.col = col + directions[i][1];
+                dir.dy = -directions[i][0];
+                dir.dx = -directions[i][1];
+
+                if (is_not_border(dir.row, dir.col)) {
+                    light_bounces(dir, energized, grid);
+                    max_energy = MAX(max_energy, print_grid1(energized));
+                }
+
+            }        
+        }
+    } 
+    printf("%lld\n", max_energy);
+    free(*grid);
+    free(grid);
 }
 
 SOLUTION("./inputs/q16.txt")
