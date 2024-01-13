@@ -79,7 +79,7 @@ void remove_node(node_t** phead, char* key) {
     node_t** current = phead;
 
     while(*current != NULL) {
-        if (strcmp((*current)->key, key) == 0 ) {
+        if (strcmp((*current)->key, key) == 0) {
             node_t* removed = *current;
             *current = (*current)->next;
             free(removed);

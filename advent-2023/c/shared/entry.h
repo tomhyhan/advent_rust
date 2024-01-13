@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <inttypes.h>
+#include <assert.h>
 
 #define TRUE 1
 #define FALSE 0
