@@ -1,1 +1,1 @@
-print(len(open("./inputs/q14.txt").read().split("\n")[0]))
+print(len(open("./inputs/q23.txt").read().split("\n")[0]))
