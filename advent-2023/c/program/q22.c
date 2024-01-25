@@ -97,7 +97,7 @@ void part1(char* input) {
         if (bads[i]) cannot++;
     }
 
-    printf("%d\n", list_len(bricks) - cannot + 1);
+    printf("part1: %d\n", list_len(bricks) - cannot + 1);
 
     for (i=0; i < list_len(bricks); ++i) {
         int* depends = calloc(list_len(bricks), sizeof(int));
@@ -127,7 +127,7 @@ void part1(char* input) {
         destroy_list(queue);
     }
     
-    printf("%d\n", falls);
+    printf("part2: %d\n", falls);
     destroy_list(bricks);
 }
 
