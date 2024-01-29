@@ -123,6 +123,8 @@ void part1(char* input) {
     printf("%d\n", 773 * 715);
 }
 
-void part2(char* input) {}
+void part2(char* input) {
+    
+}
 
 SOLUTION("./inputs/q25.txt")

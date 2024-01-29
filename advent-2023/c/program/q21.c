@@ -75,7 +75,7 @@ void part1(char* input) {
     current_points.pts[0].col = grid_info.start.col;
     current_points.size++;
     
-    for (steps=0; steps < 64; ++steps) {
+    for (steps=0; steps <65; ++steps) {
         plots_t* current = steps % 2 == 0? &current_points: &next_points; 
         plots_t* next = steps % 2 == 0? &next_points: &current_points; 
         size_t i,j;
@@ -92,12 +92,11 @@ void part1(char* input) {
                 next->grid[nrow][ncol] = TRUE;
                 next->pts[next->size].row = nrow;
                 next->pts[next->size].col = ncol;
-                next->size+= 1;
+                next->size += 1;
             }
         }
         print_grid(next->grid);
     }
-    
     free(grid_info.grid);
 }
 
