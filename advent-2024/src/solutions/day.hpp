@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <regex>
 
 #include <string>
 #include <vector>
@@ -26,6 +27,14 @@ class Day1 : public Day {
 };
 
 class Day2 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+    protected:
+        void part1(stringstream& input_buffer);
+        void part2(stringstream& input_buffer);
+};
+
+class Day3 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
     protected:
