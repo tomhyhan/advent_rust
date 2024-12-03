@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "*.ejs": "html",
+    "*.py": "python",
+    "vector": "cpp",
+    "iosfwd": "cpp",
+    "xstring": "cpp",
+    "optional": "cpp"
+  }
+}

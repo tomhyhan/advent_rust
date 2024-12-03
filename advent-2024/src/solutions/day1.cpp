@@ -1,15 +1,4 @@
-#include <iostream>
-#include <sstream>
-
-#include <string>
-#include <algorithm>
-#include <vector>
-#include <ranges>
-#include <unordered_map>
-
 #include "day.hpp"
-
-using namespace std;
 
 string Day1::solve(stringstream& input_buffer) {
     int result = 0;
