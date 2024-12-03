@@ -78,6 +78,11 @@ def part2(stones):
         solver.insert(z + vz * t == stone.pos[2] + stone.vel[2] * t)
 
     print(solver.check())
+    print(solver.model().eval(x))
+    print(solver.model().eval(vx))
+    print(solver.model().eval(vy))
+    print(solver.model().eval(y))
+    print(solver.model().eval(z))
     print(solver.model().eval(x+y+z))    
 
 def solution():

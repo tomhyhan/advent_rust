@@ -20,7 +20,7 @@ def next_garden_plots(garden_plots, grid, memo):
     return next_plots
 
 def part1(grid):
-    steps = 6
+    steps = 65
     start = find_start(grid)
     garden_plots = set([start])
     for _ in range(steps):
@@ -40,7 +40,7 @@ def get_range_plots(garden_plots, row_len, col_len, start):
     return len([(row,col) for row, col in garden_plots if start[0] - r //2 <= row <= start[0] + r and start[1] -c <= col <= start[1] + c])
 
 def part2(grid):
-    resize = 500
+    resize = 300
     start = find_start(grid)
     row_len, col_len = len(grid), len(grid[0])
     start = (start[0] + row_len * (resize // 2), start[1] + col_len * (resize // 2))
@@ -48,7 +48,7 @@ def part2(grid):
     garden_plots = set([start])
     prev = 0
     increases = []
-    steps = 350
+    steps = 65+262+5 
     # not that necessary
     memo = {"even":{
                 "before": set(),
@@ -74,21 +74,21 @@ def part2(grid):
             memo["even"]["after"] = after
     print("length", len(garden_plots))
 
-    for i in range(5, len(increases)):
-        pairsize = i
-        for start in range(len(increases) - pairsize * 3):
-            end = start + pairsize
-            pair = increases[start : end]
-            next_pair = increases[end: end + pairsize]
-            next_next_pair = increases[end + pairsize: end + pairsize*2]
-            found = True
-            for j in range(len(pair)):
-                if next_pair[j] - pair[j] != next_next_pair[j] - next_pair[j]:
-                    found = False    
-                    break
-            if found:
-                print("found", pairsize, start, pair, next_pair)
-                break
+    # for i in range(5, len(increases)):
+    #     pairsize = i
+    #     for start in range(len(increases) - pairsize * 3):
+    #         end = start + pairsize
+    #         pair = increases[start : end]
+    #         next_pair = increases[end: end + pairsize]
+    #         next_next_pair = increases[end + pairsize: end + pairsize*2]
+    #         found = True
+    #         for j in range(len(pair)):
+    #             if next_pair[j] - pair[j] != next_next_pair[j] - next_pair[j]:
+    #                 found = False    
+    #                 break
+    #         if found:
+    #             print("found", pairsize, start, pair, next_pair)
+    #             break
 
 # sample 
 # found 11 37 [48, 50, 45, 64, 54, 39, 50, 60, 68, 59, 81] [64, 66, 59, 82, 70, 48, 61, 74, 84, 73, 99]
@@ -100,15 +100,15 @@ def solution():
     filename = "./inputs/q21.txt"
     grid = open(filename).read().split('\n')
     # part1(grid)
-    # part2(grid)
-    print(divmod((26501365-1 - 0 ), 131))
-    print(91055 - 32896)
-    print(32896 - 3725)
-    print(58159 - 29171)
-    total = 3725
-    for i in range(202300):
-        total += 29171 + 28988 * i
-    print(total)
+    part2(grid)
+    # print(divmod((26501365-1 - 0 ), 131))
+    # print(91055 - 32896)
+    # print(32896 - 3725)
+    # print(58159 - 29171)
+    # total = 3725
+    # for i in range(202300):
+    #     total += 29171 + 28988 * i
+    # print(total)
 # 846 1464 2244 3186 4290
 # 894 1528 2324
 # 3725 32896 91055
