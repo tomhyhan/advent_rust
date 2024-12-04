@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <ranges>
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+
 using namespace std;
 
 class Day {
@@ -47,5 +49,5 @@ class Day4 : public Day {
         string solve(stringstream& input_buffer) override;
     protected:
         void part1(vector<string>& grid);
-        void part2(stringstream& input_buffer);
+        void part2(vector<string>& grid);
 };
