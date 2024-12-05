@@ -57,6 +57,6 @@ class Day5 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
     protected:
-        void part1();
-        void part2();
+        void part1(map<int, set<int>> graph,vector<vector<int>> pages);
+        void part2(map<int, set<int>> graph,vector<vector<int>> pages);
 };
