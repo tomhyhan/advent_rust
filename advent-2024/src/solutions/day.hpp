@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
 
 #include <algorithm>
 #include <unordered_map>
@@ -50,4 +51,12 @@ class Day4 : public Day {
     protected:
         void part1(vector<string>& grid);
         void part2(vector<string>& grid);
+};
+
+class Day5 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+    protected:
+        void part1();
+        void part2();
 };
