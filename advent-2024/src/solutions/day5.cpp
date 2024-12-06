@@ -122,5 +122,7 @@ void Day5::part2(map<int, set<int>> graph,vector<vector<int>> pages) {
             mid_page_num += rev_degree[page.size()/2];
         }
     }
+
+    
     cout << "Part2: " << mid_page_num << endl;
 }

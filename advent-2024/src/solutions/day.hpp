@@ -64,7 +64,4 @@ class Day5 : public Day {
 class Day6 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
-    protected:
-        void part1(vector<string> map, tuple<size_t, size_t> start);
-        void part2(vector<string> map, tuple<size_t, size_t> start);
 };
