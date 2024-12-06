@@ -60,3 +60,11 @@ class Day5 : public Day {
         void part1(map<int, set<int>> graph,vector<vector<int>> pages);
         void part2(map<int, set<int>> graph,vector<vector<int>> pages);
 };
+
+class Day6 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+    protected:
+        void part1(vector<string> map, tuple<size_t, size_t> start);
+        void part2(vector<string> map, tuple<size_t, size_t> start);
+};
