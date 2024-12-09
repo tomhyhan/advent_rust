@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
+#include <functional>
 
 #include <string>
 #include <vector>
@@ -62,6 +63,11 @@ class Day5 : public Day {
 };
 
 class Day6 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+
+class Day7 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
