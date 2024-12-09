@@ -16,6 +16,8 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
+typedef long long int64;
+
 using namespace std;
 
 class Day {
