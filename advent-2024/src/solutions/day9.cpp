@@ -34,13 +34,12 @@ void part1(vector<int> disk) {
     int left = 0;
     int right = disk.size() - 1;
     int64 total=0;
-    while (left <= right) {
+    while (true) {
         while (disk[left] != -1) left++;
         while (disk[right] == -1) right--;
+        if (left >= right) break;
         disk[left] = disk[right];
         disk[right] = -1;
-        left++;
-        right--;
     }
     
     for (int i=0; i < disk.size(); i++) {
@@ -49,4 +48,9 @@ void part1(vector<int> disk) {
     }
     // 6331928801055 X
     cout << total << endl;
+}
+
+void part2() {
+    // 00...111...2...333.44.5555.6666.777.888899
+
 }
