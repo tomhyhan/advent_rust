@@ -11,6 +11,7 @@
 #include <map>
 
 #include <algorithm>
+#include <cmath>
 #include <unordered_map>
 #include <ranges>
 
@@ -85,6 +86,16 @@ class Day9 : public Day {
 };
 
 class Day10 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+
+class Day11 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+
+class Day12 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
