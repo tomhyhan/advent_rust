@@ -4,7 +4,7 @@ typedef pair<int, int> Point_t;
 typedef tuple<int, int, char> Seen_t;
 
 const int DIRECTIONS[4][2] = {{0,1},{1,0},{0,-1},{-1,0}};
-const int NDIRECTIONS[4][2] = {{-1,-1},{0,-1},{-1,0},{0,0}};
+const int NDIRECTIONS[4][2] = {{0,0},{0,1},{1,0},{1,1}};
 
 void part1(int row, int n_col, map<Point_t, char> garden);
 void part2(int n_row, int n_col, map<Point_t, char> garden);
@@ -65,6 +65,39 @@ int get_area(Point_t pt, map<Point_t, char>& garden, set<Point_t>& visited) {
     return area * perimeter;
 }
 
+set<Point_t> get_area_pts(Point_t pt, map<Point_t, char>& garden, set<Point_t>& visited) {
+    set<Point_t> area_pts;
+    
+    char curr_ch = garden[pt];
+
+    vector<Point_t> stack;
+    stack.push_back(pt);
+
+    while (!stack.empty()) {
+        Point_t curr_pt = stack.back();
+        stack.pop_back();
+
+        if (visited.contains(curr_pt)) {
+            continue;
+        }
+        visited.insert(curr_pt);
+
+        auto [row, col] = curr_pt;
+        area_pts.insert(curr_pt);
+
+        for (auto dir: DIRECTIONS) {
+            int nrow = row + dir[0];
+            int ncol = col + dir[1];
+            Point_t next_pt = {nrow, ncol};
+            if (garden.contains(next_pt) && garden[next_pt] == curr_ch) {
+                stack.push_back(next_pt);
+            }
+        }
+    }
+
+    return area_pts;
+}
+
 void part1(int n_row, int n_col, map<Point_t, char> garden) {
     set<Point_t> visited;
 
@@ -81,93 +114,93 @@ void part1(int n_row, int n_col, map<Point_t, char> garden) {
     cout << "Part1: " << total << endl;
 }
 
-int area(vector<Point_t> coords) {
-    return 0;
+int countDiagonalPoints(int r, int c, set<Point_t>& p) {
+    return p.count({r-1,c-1}) + p.count({r-1,c+1}) + 
+           p.count({r+1,c-1}) + p.count({r+1,c+1});
 }
 
-int get_area_discount(int row, int col, char curr_c, map<Point_t, set<char>>& extended_garden, set<Seen_t>& visited) {
-    vector<Point_t> coords;
+int get_perimeter(Point_t start, set<Point_t>& perimeters) {
+    int corners = 0;
+    set<Point_t> visited;
 
-    vector<tuple<int, int, int>> stack;
-    
-    stack.push_back(make_tuple(row, col, -1));
-    int last_r, last_c;
-    cout << curr_c << endl;
+    vector<Point_t> stack;
+    stack.push_back(start);
+
+
     while (!stack.empty()) {
-        auto [curr_row, curr_col, curr_dir] = stack.back();
+        auto [row, col] = stack.back();
         stack.pop_back();
-        last_r = curr_row;
-        last_c = curr_col;
-
-        // Seen_t seen = {curr_row, curr_col, curr_c};
-        // if (visited.contains(seen)) continue;
         
+        Point_t pt = {row, col};
+        if (visited.contains(pt)) continue;
+        visited.insert(pt);
 
-        // cout << curr_row << " " << curr_col << endl;
-        Point_t pt = {curr_row, curr_col};
+        int count_n = 0;
+        vector<int> dir_diff;
         for (int i=0; i <  ARRAY_SIZE(DIRECTIONS); i++) {
-            int nrow = curr_row + DIRECTIONS[i][0];
-            int ncol = curr_col + DIRECTIONS[i][1];
+            int nrow = row + DIRECTIONS[i][0];
+            int ncol = col + DIRECTIONS[i][1];
             Point_t next_pt = {nrow, ncol};
-            Seen_t next_seen = {nrow, ncol, curr_c};
-            if (visited.contains(next_seen)) {
-                continue;
-            }
-            if (extended_garden.contains(next_pt) && extended_garden[next_pt].contains(curr_c)) {
-                if (curr_dir != i) {
-                    coords.push_back(pt);
-                }
-                visited.insert(next_seen);
-                stack.push_back(make_tuple(nrow, ncol, i));
-                break;
+
+            if (perimeters.contains(next_pt)) {
+                stack.push_back(next_pt);
+                count_n++;
+                dir_diff.push_back(i); 
             }
         }
-    }
-    cout << endl;
-    // coords.push_back(Point_t(last_r, last_c));
-    for (auto co: coords) {
-        cout << co.first << " " << co.second << endl;
+
+        if ((count_n == 2 && (abs(dir_diff[0] - dir_diff[1])  == 1 || abs(dir_diff[0] - dir_diff[1])  == 3)) || (count_n == 4 && countDiagonalPoints(row ,col, perimeters) == 3)) {
+            corners++;
+        } 
     }
 
-    return 0;
+    return corners;
 }
 
 void part2(int n_row, int n_col, map<Point_t, char> garden) {
-    map<Point_t, set<char>> extended_garden;
-
-    for (int row=0; row < n_row+1; row++) {
-        for (int col=0; col < n_col+1; col++) {
-            Point_t pt = {row, col};
-            for (auto dir: NDIRECTIONS) {
-                int nrow = row + dir[0];
-                int ncol = col + dir[1];
-                Point_t npt = {nrow, ncol};
-                if (garden.contains(npt)) {
-                    extended_garden[pt].insert(garden[npt]);
-                }
-            }
-        }
-    }
-    // for (auto c: extended_garden[Point_t(1,2)]) {
-    //     cout << c << endl;
-    // }
-
-    set<Seen_t> visited;
+        set<Point_t> visited;
 
     int total = 0;
-    for (int row=0; row < n_row+1; row++) {
-        for (int col=0; col < n_col+1; col++) {
-            Point_t pt = {row, col};
-            for (auto c: extended_garden[pt]) {
-                Seen_t seen = {row, col, c};
-                if (visited.contains(seen)) continue;
-                total += get_area_discount(row, col, c, extended_garden, visited);
-                // goto DEBUG;
-
+    for (int row=0; row < n_row; row++) {
+        for (int col=0; col < n_col; col++) {
+            Point_t pt = {row, col}; 
+            if (visited.contains(pt)) {
+                continue;
             }
+            set<Point_t> area_pts =  get_area_pts(pt, garden,visited);
+            int area = area_pts.size(); 
+            int min_row = numeric_limits<int>::max();
+            int min_col = numeric_limits<int>::max();
+            int max_row = numeric_limits<int>::min(); 
+            int max_col = numeric_limits<int>::min();
+
+            for (const auto& pt : area_pts) {
+                min_row = min(min_row, pt.first);
+                max_row = max(max_row, pt.first);
+                min_col = min(min_col, pt.second);
+                max_col = max(max_col, pt.second);
+            }            
+            set<Point_t> perimeters;
+
+            int i = 0;
+            for (int mrow=min_row; mrow <= max_row; mrow++) {
+                int j=0;
+                for (int mcol=min_col; mcol <= max_col; mcol++) {
+                    if (area_pts.contains(Point_t(mrow, mcol))) {
+                        for (auto dir: NDIRECTIONS) {
+                            int nprow = mrow + dir[0] + i;
+                            int npcol = mcol + dir[1] + j;
+                            perimeters.insert(Point_t(nprow, npcol));
+                        }
+                    }
+                    j++;
+                }
+                i++;
+            }
+            int perimeter = get_perimeter(*perimeters.begin(), perimeters);
+            total += area * perimeter;
         }
     }
-    DEBUG:
     cout << "Part2: " << total << endl;
 }
 
