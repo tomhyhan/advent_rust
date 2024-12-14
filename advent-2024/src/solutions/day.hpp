@@ -3,12 +3,14 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
+#include <typeinfo>
 #include <functional>
 
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
+#include <array>
 
 #include <algorithm>
 #include <cmath>
@@ -96,6 +98,11 @@ class Day11 : public Day {
 };
 
 class Day12 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+
+class Day13 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
