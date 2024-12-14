@@ -1,17 +1,33 @@
 #include "day.hpp"
 
-typedef pair<int, int> Point_t;
-
-
 class Machine {
     public:
-        Point_t buttonA;
-        Point_t buttonB;
-        Point_t prize;
-        Machine(vector<Point_t> info) {
-            buttonA = info[0];
-            buttonB = info[1];
-            prize = info[2];
+        long double x1, x2, y1, y2, c1, c2;
+        Machine(vector<long double> info) {
+            x1 = info[0];
+            x2 = info[1];
+            y1 = info[2];
+            y2 = info[3];
+            c1 = info[4] + 10000000000000;
+            c2 = info[5] + 10000000000000;
+        }
+
+        void print() {
+            cout << x1 << "x1" << " + " << y1 << "y1" << " = " << c1 << endl; 
+            cout << x2 << "x2" << " + " << y2 << "y2" << " = " << c2 << endl; 
+        }
+        
+        long double apply_cramer() {
+            long double det = x1*y2 - x2*y1;
+            long double area_A = c1*y2 - c2*y1;
+            long double area_B = x1*c2 - x2*c1;
+            long double A = (area_A) / det;
+            long double B = (area_B) / det;
+            if ((int64)A == A && (int64)B == B) {
+                // cout << A << " " << B << endl;
+                return A *3 +  B;
+            }
+            return 0;
         }
 };
 
@@ -22,16 +38,18 @@ string Day13::solve(stringstream& input_buffer) {
     regex p_pattern(R"(Prize: X=(\d+), Y=(\d+))");
     
     string line;
-    vector<Point_t> info;
+    vector<long double> info;
     vector<Machine> machines;
 
     while (getline(input_buffer,line)) {
 
         smatch matches;
         if (regex_search(line, matches, btn_pattern)) {
-            info.push_back(make_pair(stoi(matches[1]), stoi(matches[2])));
+            info.push_back(stold(matches[1]));
+            info.push_back(stold(matches[2]));
         } else if (regex_search(line, matches, p_pattern)) {
-            info.push_back(make_pair(stoi(matches[1]), stoi(matches[2])));
+            info.push_back(stold(matches[1]));
+            info.push_back(stold(matches[2]));
         }
 
         if (line.empty()) {
@@ -46,63 +64,11 @@ string Day13::solve(stringstream& input_buffer) {
     return "day13";
 }
 
-void get_tokens(vector<pair<int, array<int,2>>>& DP, int x1, int x2, int prize) {
-    int bi = 0;
-    for (auto button: {x1,x2}) {
-        for (int i=0; i < prize + 1; i++) {
-            if (i >= button ) {
-                int curr = DP[i-button].first + 1;
-                if (curr < DP[i].first) {
-                    DP[i].first = curr;
-                    DP[i].second = DP[i-button].second;
-                    DP[i].second[bi]++;
-                }
-            }
-        }
-        bi++;
-    }
-}
-
 void part1(vector<Machine> machines) {
-    int total = 0;
+    long double total = 0;
+
     for (auto machine: machines) {
-        int prize_x = machine.prize.first;
-        int x2 = machine.buttonA.first;
-        int x1 = machine.buttonB.first;
-
-        int max_num = 99999;
-
-        int prize_y = machine.prize.second;
-        int y2 = machine.buttonA.second;
-        int y1 = machine.buttonB.second;
-        
-        vector<pair<int, array<int,2>>> DPX(prize_x+1, make_pair(max_num, array<int,2>{0,0}));
-        DPX[0].first = 0;
-        
-        vector<pair<int, array<int,2>>> DPY(prize_y+1, make_pair(max_num, array<int,2>{0,0}));
-        DPY[0].first = 0;
-
-        get_tokens(DPX, x1, x2, prize_x);
-        get_tokens(DPY, y1, y2, prize_y);
-
-        // 78423
-        // cout << DPX[prize_x].second[0] << " " << DPY[prize_y].second[0] << endl;
-        // && DPX[prize_x].second[0] == DPY[prize_y].second[0]
-        int x_t = max_num;
-        if (DPX[prize_x].first != max_num && DPX[prize_x].second[0] * y1 + DPX[prize_x].second[1] * y2 == prize_y) {
-            // cout <<  DPX[prize_x].second[0] << " "<< DPX[prize_x].second[1]  << endl; 
-            x_t = DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3; 
-            // cout <<  DPY[prize_y].second[0] << " "<< DPY[prize_y].second[1]  << endl; 
-            // cout <<  DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3 << endl; 
-        }
-
-        int y_t = max_num;
-        if (DPY[prize_y].first != max_num && DPY[prize_y].second[0] * x1 + DPY[prize_y].second[1] * x2 == prize_x) {
-            y_t = DPY[prize_y].second[0] + DPY[prize_y].second[1] * 3; 
-        }
-        if (x_t != max_num || y_t != max_num) {
-            total += min(x_t, y_t);
-        }
+        total += machine.apply_cramer();
     }
-    cout << "Part1: " << total << endl;
+    cout << "Part1: " << (int64)total << endl;
 }
