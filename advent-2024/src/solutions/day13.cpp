@@ -66,7 +66,6 @@ void get_tokens(vector<pair<int, array<int,2>>>& DP, int x1, int x2, int prize) 
 void part1(vector<Machine> machines) {
     int total = 0;
     for (auto machine: machines) {
-        cout <<"asdf" << endl;
         int prize_x = machine.prize.first;
         int x2 = machine.buttonA.first;
         int x1 = machine.buttonB.first;
@@ -80,15 +79,29 @@ void part1(vector<Machine> machines) {
         vector<pair<int, array<int,2>>> DPX(prize_x+1, make_pair(max_num, array<int,2>{0,0}));
         DPX[0].first = 0;
         
-        vector<pair<int, array<int,2>>> DPY(prize_x+1, make_pair(max_num, array<int,2>{0,0}));
+        vector<pair<int, array<int,2>>> DPY(prize_y+1, make_pair(max_num, array<int,2>{0,0}));
         DPY[0].first = 0;
 
         get_tokens(DPX, x1, x2, prize_x);
         get_tokens(DPY, y1, y2, prize_y);
 
-        if (DPX[prize_x].first != max_num && DPY[prize_y].first != max_num) {
-            total += DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3; 
-            cout <<  DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3 << endl; 
+        // 78423
+        // cout << DPX[prize_x].second[0] << " " << DPY[prize_y].second[0] << endl;
+        // && DPX[prize_x].second[0] == DPY[prize_y].second[0]
+        int x_t = max_num;
+        if (DPX[prize_x].first != max_num && DPX[prize_x].second[0] * y1 + DPX[prize_x].second[1] * y2 == prize_y) {
+            // cout <<  DPX[prize_x].second[0] << " "<< DPX[prize_x].second[1]  << endl; 
+            x_t = DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3; 
+            // cout <<  DPY[prize_y].second[0] << " "<< DPY[prize_y].second[1]  << endl; 
+            // cout <<  DPX[prize_x].second[0] + DPX[prize_x].second[1] * 3 << endl; 
+        }
+
+        int y_t = max_num;
+        if (DPY[prize_y].first != max_num && DPY[prize_y].second[0] * x1 + DPY[prize_y].second[1] * x2 == prize_x) {
+            y_t = DPY[prize_y].second[0] + DPY[prize_y].second[1] * 3; 
+        }
+        if (x_t != max_num || y_t != max_num) {
+            total += min(x_t, y_t);
         }
     }
     cout << "Part1: " << total << endl;
