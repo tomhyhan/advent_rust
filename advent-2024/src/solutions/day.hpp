@@ -5,6 +5,8 @@
 #include <regex>
 #include <typeinfo>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include <string>
 #include <vector>
@@ -16,6 +18,7 @@
 #include <cmath>
 #include <unordered_map>
 #include <ranges>
+#include <numeric>
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -103,6 +106,11 @@ class Day12 : public Day {
 };
 
 class Day13 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+
+class Day14 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
