@@ -70,6 +70,10 @@ class AOCSolver {
                 Day14 day14solver;
                 return day14solver.solve(file);
             };
+            solutions["day15"] = [](stringstream& file) {
+                Day15 day15solver;
+                return day15solver.solve(file);
+            };
         };
 
         bool solve(const string& day) {
