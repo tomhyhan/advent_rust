@@ -7,7 +7,9 @@
 #include <functional>
 #include <chrono>
 #include <thread>
+#include <limits>
 
+#include <queue>
 #include <string>
 #include <vector>
 #include <set>
@@ -115,6 +117,10 @@ class Day14 : public Day {
         string solve(stringstream& input_buffer) override;
 };
 class Day15 : public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
+class Day16 : public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
