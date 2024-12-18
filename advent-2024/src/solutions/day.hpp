@@ -8,6 +8,7 @@
 #include <chrono>
 #include <thread>
 #include <limits>
+#include <optional>
 
 #include <queue>
 #include <string>
