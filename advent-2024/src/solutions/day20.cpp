@@ -141,4 +141,3 @@ void part2(map<point_t, char> grid, point_t start, point_t end) {
     }
     cout << "Part2: " << least100 << endl;
 }
-
