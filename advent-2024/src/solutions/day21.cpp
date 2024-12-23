@@ -170,8 +170,8 @@ void fill_shotest_path_by_rate_of_chage(map<stod_t, vector<string>> dir_paths, m
 // v<<A>>^A<A>AvA<^AA>A<vAAA>^A
 // <A^A>^^AvvvA
 
-int64 create_all_path(int depth, char source, char dest, map<stod_t, vector<string>> paths, map<tuple<int, char, char>, int64>& memo) {
-    tuple<int, char, char> key = make_tuple(depth, source, dest);
+int64 create_all_path(int depth, char source, char dest, int row, int col, map<stod_t, vector<string>> paths, map<tuple<int, int, int, char, char>, int64>& memo) {
+    tuple<int, int, int, char, char> key = make_tuple(depth, row, col, source, dest);
     if (depth >= 26) {
         return 1;
     } else if (memo.contains(key)) {
@@ -179,14 +179,18 @@ int64 create_all_path(int depth, char source, char dest, map<stod_t, vector<stri
     }
 
     int64 min_new_path = numeric_limits<int64>::max();
+    int i=0;
     for (auto path: paths[stod_t(source, dest)]) {
         int64 new_path = 0; 
         char prev = 'A';
+        int j=0;    
         for (auto c: path) {
-            new_path += create_all_path(depth+1, prev, c, paths, memo);
+            new_path += create_all_path(depth+1, prev, c, i, j, paths, memo);
             prev = c;
+            j++;
         }
         min_new_path = min(min_new_path, new_path);
+        i++;
     }
 
     memo[key] = min_new_path; 
@@ -203,7 +207,7 @@ void part2(vector<string> codes) {
     // cout << optimal_dir_paths[stod_t('A', '<')] << endl;
 
     int64 total = 0;
-    map<tuple<int, char, char>, int64> memo;
+    map<tuple<int, int, int, char, char>, int64> memo;
 
     for (auto code: codes) {
         int64 i_part = stoi(code.substr(0,3));
@@ -215,7 +219,7 @@ void part2(vector<string> codes) {
             char prev = 'A';
             int64 new_code = 0;
             for (auto curr: num_code) {
-                new_code += create_all_path(0, prev, curr, dir_paths, memo);
+                new_code += create_all_path(0, prev, curr, -1,-1, dir_paths, memo);
                 prev = curr; 
             }
             min_len = min(min_len, new_code);
