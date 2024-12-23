@@ -48,8 +48,9 @@ num_paths = create_shortest_paths(NUMERIC_PAD)
 dir_paths = create_shortest_paths(DIR_PAD)
 
 for code in codes:
-num_paths
-break
+
+    num_paths
+    break
 
 for k, v in dir_paths.items():
     print(k, v)
