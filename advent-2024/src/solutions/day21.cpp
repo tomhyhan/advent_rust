@@ -61,11 +61,8 @@ void find_optimal_path(char ch, point_t pt, map<point_t, char> pad, map<stod_t, 
                 queue.push_back(make_tuple(nrow, ncol, path+cdir));
             }
         }
-
-
     }
 }
-
 
 void fill_paths(map<stod_t, vector<string>>& num_paths, map<stod_t, vector<string>>& dir_paths) {
     for (auto [pt, ch]: NUMERIC_PAD) {
@@ -93,7 +90,6 @@ vector<string> create_all_path(string code, map<stod_t, vector<string>> paths, c
 
     return new_paths;
 }
-
 
 void part1(vector<string> codes) {
     map<stod_t, vector<string>> num_paths;
@@ -142,15 +138,9 @@ void fill_shotest_path_by_rate_of_chage(map<stod_t, vector<string>> dir_paths, m
             int min_path_len = numeric_limits<int>::max();
             string min_path;
             for (auto path: dir_paths[stod_t(ch1, ch2)]) {
-                // v<<A <v<A
                 string curr_path = "";
                 char prev = 'A';
                 vector<string> all_paths = create_all_path(path, dir_paths, prev);
-                // cout << ch1 << " " << ch2 << " "<< path << endl;
-                // for (auto p: all_paths) {
-                //     cout << p << endl;
-                // }
-                // cout << endl;
                 string curr_min_path = find_min_by_len(all_paths);
                 if (curr_min_path.size() < min_path_len) {
                     min_path_len = curr_min_path.size();
@@ -162,39 +152,23 @@ void fill_shotest_path_by_rate_of_chage(map<stod_t, vector<string>> dir_paths, m
     }
 }
 
-// <vA<AA>>^A
-// v<<A
-// <
-
-// <vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A
-// v<<A>>^A<A>AvA<^AA>A<vAAA>^A
-// <A^A>^^AvvvA
-
-int64 create_all_path(int depth, char source, char dest, int row, int col, map<stod_t, vector<string>> paths, map<tuple<int, int, int, char, char>, int64>& memo) {
-    tuple<int, int, int, char, char> key = make_tuple(depth, row, col, source, dest);
-    if (depth >= 26) {
+int64 create_all_path(int depth, char source, char dest, map<stod_t, string> paths, map<tuple<int, char, char>, int64>& memo) {
+    tuple<int, char, char> key = make_tuple(depth, source, dest);
+    if (depth >= 25) {
         return 1;
     } else if (memo.contains(key)) {
         return memo[key];
     }
 
-    int64 min_new_path = numeric_limits<int64>::max();
-    int i=0;
-    for (auto path: paths[stod_t(source, dest)]) {
-        int64 new_path = 0; 
-        char prev = 'A';
-        int j=0;    
-        for (auto c: path) {
-            new_path += create_all_path(depth+1, prev, c, i, j, paths, memo);
-            prev = c;
-            j++;
-        }
-        min_new_path = min(min_new_path, new_path);
-        i++;
+    int64 new_path = 0; 
+    char prev = 'A';
+    for (auto c: paths[stod_t(source, dest)]) {
+        new_path += create_all_path(depth+1, prev, c, paths, memo);
+        prev = c;
     }
 
-    memo[key] = min_new_path; 
-    return min_new_path;
+    memo[key] = new_path; 
+    return new_path;
 }
 
 void part2(vector<string> codes) {
@@ -203,11 +177,19 @@ void part2(vector<string> codes) {
     map<stod_t, string> optimal_dir_paths;
 
     fill_paths(num_paths, dir_paths);
-    // fill_shotest_path_by_rate_of_chage(dir_paths, optimal_dir_paths);
-    // cout << optimal_dir_paths[stod_t('A', '<')] << endl;
+    fill_shotest_path_by_rate_of_chage(dir_paths, optimal_dir_paths);
+
+    for (const auto& pair : optimal_dir_paths) {
+        std::cout << "Key: (" << pair.first.first << "," 
+                  << pair.first.second << "), Value: " 
+                  << pair.second << std::endl;
+    }
+
+    optimal_dir_paths[stod_t('^', '>')] = "v>A";
+    optimal_dir_paths[stod_t('v', 'A')] =  "^>A";
 
     int64 total = 0;
-    map<tuple<int, int, int, char, char>, int64> memo;
+    map<tuple<int, char, char>, int64> memo;
 
     for (auto code: codes) {
         int64 i_part = stoi(code.substr(0,3));
@@ -219,7 +201,7 @@ void part2(vector<string> codes) {
             char prev = 'A';
             int64 new_code = 0;
             for (auto curr: num_code) {
-                new_code += create_all_path(0, prev, curr, -1,-1, dir_paths, memo);
+                new_code += create_all_path(0, prev, curr, optimal_dir_paths, memo);
                 prev = curr; 
             }
             min_len = min(min_len, new_code);
