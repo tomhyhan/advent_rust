@@ -185,6 +185,8 @@ void part2(vector<string> codes) {
                   << pair.second << std::endl;
     }
 
+    // optimal path by analyzing between 2 choices
+    
     optimal_dir_paths[stod_t('^', '>')] = "v>A";
     optimal_dir_paths[stod_t('v', 'A')] =  "^>A";
 

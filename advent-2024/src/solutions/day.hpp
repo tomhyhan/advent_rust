@@ -153,3 +153,8 @@ class Day21: public Day {
     public:
         string solve(stringstream& input_buffer) override;
 };
+
+class Day22: public Day {
+    public:
+        string solve(stringstream& input_buffer) override;
+};
