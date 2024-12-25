@@ -22,5 +22,6 @@ for i in range(len(SN)):
         if len(p1 & p2) > 10:
             count[tuple(sorted(list(p1 & p2)))] += 1
 
-answer = [k for k,v in count.items() if len(k) * (len(k) - 1) / 2 == v][0]
+answer = [(k,v) for k,v in count.items() if len(k) * (len(k) - 1) / 2 == v][0]
 print(','.join(sorted(answer)))
+

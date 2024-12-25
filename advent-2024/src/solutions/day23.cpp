@@ -3,6 +3,7 @@
 
 namespace {
     void part1(map<string, vector<string>> networks);
+    void part2(map<string, vector<string>> networks);
 }
 
 
@@ -19,34 +20,80 @@ string Day23::solve(stringstream& input_buffer) {
         networks[value].push_back(key);
     }
 
-    part1(networks);
-
+    // part1(networks);
+    part2(networks);
+    cout << networks.size() << endl;
     return "day23";
 }
 
 namespace {
     void part1(map<string, vector<string>> networks) {
-        set<string> seen;
-        int total = 0;
-        for (auto [k, v]: networks) {
-            // if (seen.contains(k)) continue;
-            // v.push_back(k);
-            // int nt = 0;
-            cout << k << " ";
-            for (auto s: v) {
-                // seen.insert(s);
-                // if (s[0] == 't') nt++;
-                cout << s << " ";
-            }
-            cout << endl;
-            
-            // int n = v.size();
-            // int r = 3;
-            // int nott = n - nt;
-            // total = tgamma(n+1) / (tgamma(r+1) * tgamma(n-r+1)) - tgamma(nott+1) / (tgamma(r+1) * tgamma(nott-r+1));
-        }
+        set<set<string>> found;
+        for (auto [start_str, nstrs]: networks) {
+            set<set<string>> seen_inside;
+            vector<tuple<string, int, set<string>>> stack;
+            set<string> s = {start_str};
+            stack.push_back(make_tuple(start_str, 0, s));
+            while (!stack.empty()) {
+                auto [curr, distance, pair] = stack.back();
+                stack.pop_back();
 
-        cout << total << endl;
+                for (auto next: networks[curr]) {
+                    if (distance == 2 ) {
+                        if (start_str == next) {
+                            found.insert(pair);
+                        }
+                        continue;
+                    }
+                    set<string> conn = {next, curr};
+                    if (seen_inside.contains(conn)) continue;
+                    seen_inside.insert(conn);
+                    set<string> new_pair = pair;
+                    new_pair.insert(next);
+                    stack.push_back(make_tuple(next, distance+1, new_pair));
+                }
+            }
+            // break;
+        }
+        int total = 0;
+        for (auto p: found) {
+            for (auto t: p) {
+                if (t[0] == 't') {
+                    total++;
+                    break;
+                }
+            }
+        }
+        cout << "Part1: " << total << endl;
+    }
+
+    void part2(map<string, vector<string>> networks) {
+        vector<set<string>> set_networks;
+        for (auto [k, v]: networks) {
+            set<string> network;
+            network.insert(k);
+            for (auto s: v) {
+                network.insert(s);
+            }
+            set_networks.push_back(network);
+        }
+        
+        set<set<string>> test;
+        for (auto p1: set_networks) {
+            for (auto p2: set_networks) {
+                if (p1 == p2) {
+                    continue;
+                }
+                set<string> result;
+                set_intersection(p1.begin(), p1.end(),p2.begin(), p2.end(), inserter(result, result.begin()));
+
+                if (result.size() == 3) {
+                    test.insert(result);
+                }
+            }
+        }
+        // too lazy to debug ;o -> python
+        cout << test.size() << endl;
     }
 }
 
